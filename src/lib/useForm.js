@@ -141,8 +141,8 @@ function useForm(stateSchema = {}, stateValidatorSchema = {}, submitFormCallback
     [validateErrorState, submitFormCallback, values]
   );
 
-  const resetValues = (initialState) => {
-    setValues(initialState);
+  const resetValues = () => {
+    setValues(get_prop_values(state, VALUE));
   };
   return {
     handleOnChange,

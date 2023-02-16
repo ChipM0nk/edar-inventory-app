@@ -7,6 +7,7 @@ import Modal from 'Components/Modal/Modal';
 import { useDispatch, useSelector } from 'react-redux';
 import React, { useEffect } from 'react';
 import { loginThunk } from 'store/authenticate/thunk';
+import { stateSchema, stateValidatorSchema } from './loginSchema';
 
 export default function LoginModal(props) {
   const dispatch = useDispatch();
@@ -17,37 +18,11 @@ export default function LoginModal(props) {
 
   useEffect(() => {
     if (isLoggedIn) {
-      resetValues(initialState);
+      resetValues();
     } else if (error) {
       alert(error);
     }
   }, [isLoggedIn, error]);
-  const stateSchema = {
-    username: { value: '', error: '' },
-    password: { value: '', error: '' }
-  };
-
-  const initialState = {
-    username: '',
-    password: ''
-  };
-
-  const stateValidatorSchema = {
-    username: {
-      required: true,
-      validator: {
-        func: (value) => /^[a-zA-Z]+$/.test(value),
-        error: ''
-      }
-    },
-    password: {
-      required: true,
-      validator: {
-        func: (value) => /^[a-zA-Z0-9]+$/.test(value),
-        error: ''
-      }
-    }
-  };
 
   async function onSubmitForm(state) {
     dispatch(loginThunk(state));
@@ -62,7 +37,7 @@ export default function LoginModal(props) {
   const { username, password } = values;
 
   function handleClose() {
-    resetValues(initialState);
+    resetValues();
     props.onClose();
   }
   return (
