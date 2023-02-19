@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { styled, Menu, MenuItem, IconButton } from '@mui/material';
+import { Menu, MenuItem, IconButton } from '@mui/material';
 
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
@@ -11,11 +11,12 @@ import { logoutThunk } from 'store/authenticate/thunk';
 import { useNavigate } from 'react-router-dom';
 import LoginModal from './LoginModal';
 
-const AppBar = styled('div')(({ theme }) => ({
-  backgroundColor: theme.palette.primary.main,
-  height: '60px',
-  position: 'relative'
-}));
+// const AppBar = styled('div')(() => ({
+//   height: '50px',
+//   position: 'relative',
+//   gridArea: 'header',
+//   backgroundColor: '#013501'
+// }));
 
 export default function NavBar() {
   const dispatch = useDispatch();
@@ -42,11 +43,11 @@ export default function NavBar() {
 
   const [show, setShow] = useState(false);
   return (
-    <AppBar>
+    <div className={'header'}>
       <IconButton className="login-button" aria-label="profile" onClick={handleClick}>
         <AccountCircleIcon
           fontSize="large"
-          color="secondary"
+          color="primary"
           aria-haspopup="true"
           aria-expanded={open ? 'true' : undefined}
         />
@@ -91,6 +92,6 @@ export default function NavBar() {
       </Menu>
 
       <LoginModal show={show} onClose={() => setShow(false)} />
-    </AppBar>
+    </div>
   );
 }

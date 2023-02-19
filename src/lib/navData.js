@@ -11,7 +11,7 @@ import {
 export const navData = [
   {
     id: 0,
-    icon: <Home />,
+    icon: <Home style={{ color: 'white' }} />,
     name: 'Home',
     text: 'Home',
     link: '/home'

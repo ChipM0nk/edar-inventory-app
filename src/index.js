@@ -13,10 +13,17 @@ const theme = createTheme({
   palette: {
     primary: {
       main: '#153D02',
-      contrastText: '#DAF4CE'
+      contrastText: '#ffffff'
     },
     secondary: {
-      main: '#DAF4CE'
+      main: '#bfc5c1'
+    }
+  },
+  components: {
+    MuiButton: {
+      styleOverrides: {
+        root: { width: 60, alignSelf: 'center' }
+      }
     }
   }
 });

@@ -1,11 +1,11 @@
 // @ts-nocheck
-import { Stack, TextField } from '@mui/material';
+import { Button, TextField } from '@mui/material';
 import React, { useEffect, useState } from 'react';
-
+import './category.page.css';
 import { useDispatch, useSelector } from 'react-redux';
 import { getAllCategoriesThunk } from '../../store/category/thunk';
 import CustomDataGrid from '../../Components/CustomDataGrid/customDataGrid';
-import { CustomButton } from 'Components/Button/customButton';
+
 import CategoryModal from './CategoryModal';
 
 const columns = [
@@ -13,13 +13,13 @@ const columns = [
   {
     field: 'categoryCode',
     headerName: 'Category Code',
-    width: 150,
+    width: 200,
     editable: false
   },
   {
     field: 'categoryName',
     headerName: 'Category Name',
-    width: 150,
+    width: 250,
     editable: false
   }
 ];
@@ -39,30 +39,49 @@ export default function Category() {
 
   const [searchInput, setSearchInput] = useState('');
 
+  const filteredData =
+    categories && searchInput.length > 0
+      ? categories.filter((item) => {
+          return (
+            item.categoryCode.toLowerCase().includes(searchInput.toLowerCase()) ||
+            item.categoryName.toLowerCase().includes(searchInput.toLowerCase())
+          );
+        })
+      : categories;
   const searchItems = (searchValue) => {
     setSearchInput(searchValue);
   };
 
+  const [show, setShow] = useState(false);
+
   return (
     <div className="category">
-      <Stack direction="row" justifyContent="start">
+      <div className="category-actions">
+        <h2>Category</h2>
+        <Button
+          sx={{ width: 60, marginRight: '10px' }}
+          onClick={() => setShow(true)}
+          variant="contained">
+          Add
+        </Button>
         <TextField
           variant="standard"
           placeholder="Search Category....."
+          name="searchInput"
+          autoFocus="autoFocus"
+          value={searchInput}
           onChange={(e) => searchItems(e.target.value)}
           sx={{ width: '250px' }}
         />
-
-        <CustomButton sx={{ width: 60 }}>Add</CustomButton>
-      </Stack>
+      </div>
       <CustomDataGrid
-        categories={categories}
+        categories={filteredData ? filteredData : []}
         columns={columns}
         isLoading={isLoading}
-        searchInput={searchInput}
         error={error}
+        width={550}
       />
-      <CategoryModal />
+      <CategoryModal show={show} isAdd={true} onClose={() => setShow(false)} />
     </div>
   );
 }

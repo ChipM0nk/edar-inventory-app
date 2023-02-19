@@ -1,9 +1,10 @@
 .sidenav {
     top: 500px;
-    width: 250px;
+    width: 200px;
     transition: width 0.3s none;
-    height: 88vh;
+    height: 100vh;
     padding-top: 28px;
+    background-color: rgb(1, 53, 1);
 }
 
 .sidenavClosed {
@@ -21,7 +22,7 @@
     align-items: center;
     padding: 10px 20px;
     cursor: pointer;
-    color: black;
+    color: white;
     text-decoration: none;
     overflow: hidden;
 }
@@ -32,15 +33,15 @@
 }
 
 .sideitem:hover {
-    background-color: #244f7d1c;
+    background-color: #37eb701c;
 
 }
 
 .menuBtn {
-    align-self: center;
-    align-self: flex-start;
-    justify-self: flex-end;
-    color: black;
+
+    align-self: flex-start !important;
+    justify-self: flex-start !important;
+    color: white;
     background-color: transparent;
     border: none;
     cursor: pointer;

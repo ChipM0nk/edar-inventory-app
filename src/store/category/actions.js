@@ -28,9 +28,10 @@ export function categoryIsLoading() {
   };
 }
 
-export function categoryHasErrored(error) {
+export function categoryHasErrored(error, isCrud = true) {
   return {
     type: actionTypes.CATEGORY_HAS_ERRORED,
-    error: error
+    error: error,
+    isCrud: isCrud
   };
 }

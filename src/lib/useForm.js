@@ -34,12 +34,12 @@ function get_prop_values(stateSchema, prop) {
 /**
  * Custom hooks to validate your Form...
  *
- * @param {object} stateSchema model you stateSchema.
+
  * @param {object} stateValidatorSchema model your validation.
  * @param {function} submitFormCallback function to be execute during form submission.
  */
-function useForm(stateSchema = {}, stateValidatorSchema = {}, submitFormCallback) {
-  const [state, setStateSchema] = useState(stateSchema);
+function useForm(stateValidatorSchema = {}, submitFormCallback) {
+  const [state, setStateSchema] = useState(stateValidatorSchema);
 
   const [values, setValues] = useState(get_prop_values(state, VALUE));
   const [errors, setErrors] = useState(get_prop_values(state, ERROR));
@@ -50,7 +50,7 @@ function useForm(stateSchema = {}, stateValidatorSchema = {}, submitFormCallback
 
   // Get a local copy of stateSchema
   useEffect(() => {
-    setStateSchema(stateSchema);
+    setStateSchema(stateValidatorSchema);
     setDisable(true); // Disable button in initial render.
     setInitialErrorState();
   }, []); // eslint-disable-line
@@ -143,6 +143,7 @@ function useForm(stateSchema = {}, stateValidatorSchema = {}, submitFormCallback
 
   const resetValues = () => {
     setValues(get_prop_values(state, VALUE));
+    setErrors(get_prop_values(state, ERROR));
   };
   return {
     handleOnChange,
@@ -150,10 +151,9 @@ function useForm(stateSchema = {}, stateValidatorSchema = {}, submitFormCallback
     values,
     errors,
     disable,
-    setValues,
+    resetValues,
     setErrors,
-    dirty,
-    resetValues
+    dirty
   };
 }
 

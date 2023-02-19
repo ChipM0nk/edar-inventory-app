@@ -3,21 +3,42 @@ body {
   padding: 0;
   height: 100%;
 }
+.header{
+  height: '50px';
+  position: 'relative';
+  background-color: #bfc5c1;
+  grid-area: header;
+}
 
+.sidebar{
+  grid-area: sidebar;
+  padding-top: 28px;
+  background-color: #013501;
+}
+
+.content{
+  grid-area: content;
+  background-color: rgb(232, 232, 232);
+}
 .App {
   display: grid;
+  grid-template-columns: auto 1fr;
+  grid-template-rows: auto 1fr;
+  grid-template-areas: 
+  "sidebar header"
+  "sidebar content"
 }
 
 .flex-box {
   display: flex;
   /* background: #153D02; */
 
-}
+} 
 
 main {
-  padding-top: 50px;
+  padding-top: 30px;
   padding-left: 20px;
-  background: #E6ece6;
+
   /* position: absolute; */
   width: 100%;
   height: 100%;

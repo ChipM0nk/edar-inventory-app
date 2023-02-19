@@ -8,8 +8,7 @@ import { useEffect, useState } from 'react';
 import React from 'react';
 import { useSelector } from 'react-redux';
 import jwt from 'jwt-decode';
-// import { SidebarData } from 'Components/SideMenu/SidebarData';
-// import SubMenu from 'Components/SideMenu/SubMenu';
+
 import { navData } from 'lib/navData';
 import { NavLink } from 'react-router-dom';
 
@@ -32,8 +31,9 @@ export default function Sidenav() {
   const toggleOpen = () => {
     setopen(!open);
   };
+
   return (
-    <div className={open ? styles.sidenav : styles.sidenavClosed}>
+    <div className={`${open ? styles.sidenav : styles.sidenavClosed} sidebar`}>
       <button className={styles.menuBtn} onClick={toggleOpen}>
         {open ? <KeyboardDoubleArrowLeftIcon /> : <KeyboardDoubleArrowRightIcon />}
       </button>
@@ -41,6 +41,8 @@ export default function Sidenav() {
       {SidebarData.map((item, index) => {
         return <SubMenu item={item} key={index} />;
       })} */}
+      <br />
+      <br />
 
       {navData
         .filter((m) => menuList.includes(m.name))

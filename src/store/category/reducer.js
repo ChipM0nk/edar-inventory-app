@@ -1,9 +1,14 @@
 import * as actionTypes from './actionTypes';
 
+/*
+isSucess - for add, update, delete
+*/
 const initialState = {
   data: [],
   loading: false,
-  error: ''
+  error: '',
+  cruderror: '',
+  isSuccess: false
 };
 
 export default function categoryReducer(state = initialState, action) {
@@ -19,8 +24,10 @@ export default function categoryReducer(state = initialState, action) {
     case actionTypes.CATEGORY_IS_ADDED:
       return {
         ...state,
-        data: [...state.data, action.category],
-        loading: false
+        data: state.data.unshift(action.category),
+        loading: false,
+        isSuccess: true,
+        cruderror: ''
       };
 
     case actionTypes.CATEGORY_IS_UPDATED:
@@ -34,21 +41,27 @@ export default function categoryReducer(state = initialState, action) {
       return {
         ...state,
         data: newCategories,
-        loading: false
+        loading: false,
+        isSuccess: true,
+        cruderror: ''
       };
 
     case actionTypes.CATEGORY_IS_DELETED:
       return {
         ...state,
         data: state.data.filter((category) => category.categoryId !== action.category.categoryId),
-        loading: false
+        loading: false,
+        isSuccess: true,
+        cruderror: ''
       };
 
     case actionTypes.CATEGORY_IS_LOADING:
       return {
         ...state,
         data: [],
-        loading: true
+        loading: true,
+        isSuccess: false,
+        error: ''
       };
 
     case actionTypes.CATEGORY_HAS_ERRORED:
@@ -56,7 +69,9 @@ export default function categoryReducer(state = initialState, action) {
         ...state,
         data: [],
         loading: false,
-        error: action.error
+        isSuccess: false,
+        error: action.isCrud ? '' : action.error,
+        crudError: action.isCrud ? action.error : ''
       };
 
     default:

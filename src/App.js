@@ -1,4 +1,4 @@
-// @ts-ignore
+// @ts-nocheck
 
 import NavBar from 'Components/NavBar/navBar';
 import React from 'react';
@@ -15,18 +15,16 @@ function App() {
   return (
     <div className="App">
       <NavBar />
-      <div className="flex-box">
-        <Sidenav />
-        <main>
-          <Routes>
-            <Route path="/" element={<InvoiceForm />} />
-            <Route path="/stockinform" element={<StockInForm />} />
-            <Route path="/invoices" element={<Invoices />} />
-            <Route path="/stockins" element={<Stockins />} />
-            <Route path="/category" element={<Category />} />
-          </Routes>
-        </main>
-      </div>
+      <Sidenav />
+      <main className="content">
+        <Routes>
+          <Route path="/" element={<InvoiceForm />} />
+          <Route path="/stockinform" element={<StockInForm />} />
+          <Route path="/invoices" element={<Invoices />} />
+          <Route path="/stockins" element={<Stockins />} />
+          <Route path="/category" element={<Category />} />
+        </Routes>
+      </main>
     </div>
   );
 }
