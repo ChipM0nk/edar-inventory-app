@@ -4,9 +4,9 @@ import * as categoryActions from './actions';
 
 export const getAllCategoriesThunk = () => {
   return async (dispatch) => {
-    //hack for now
-    dispatch(categoryActions.categoryIsLoading());
     try {
+      //hack for now
+      dispatch(categoryActions.categoryIsLoading());
       const categories = await fetchAll('category');
       dispatch(categoryActions.categoryFetchSuccess(categories));
     } catch (error) {
@@ -17,9 +17,11 @@ export const getAllCategoriesThunk = () => {
 
 export const addCategoryThunk = (addObj) => {
   return async (dispatch) => {
-    //hack for now
-    dispatch(categoryActions.categoryIsLoading);
     try {
+      //hack for now
+      console.log('Dispatch category loading');
+      dispatch(categoryActions.categoryIsLoading);
+      console.log('Dispatch category loading end');
       const category = await addItem('category', addObj);
       dispatch(categoryActions.categoryIsAdded(category));
     } catch (error) {

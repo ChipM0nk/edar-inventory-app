@@ -24,7 +24,7 @@ export default function categoryReducer(state = initialState, action) {
     case actionTypes.CATEGORY_IS_ADDED:
       return {
         ...state,
-        data: state.data.unshift(action.category),
+        data: [action.category, ...state.data],
         loading: false,
         isSuccess: true,
         cruderror: ''
@@ -56,18 +56,18 @@ export default function categoryReducer(state = initialState, action) {
       };
 
     case actionTypes.CATEGORY_IS_LOADING:
+      console.log('Loading....');
       return {
         ...state,
-        data: [],
         loading: true,
         isSuccess: false,
         error: ''
       };
 
     case actionTypes.CATEGORY_HAS_ERRORED:
+      console.log('Error....');
       return {
         ...state,
-        data: [],
         loading: false,
         isSuccess: false,
         error: action.isCrud ? '' : action.error,

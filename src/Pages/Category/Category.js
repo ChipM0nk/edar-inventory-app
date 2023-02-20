@@ -1,11 +1,12 @@
 // @ts-nocheck
-import { Button, TextField } from '@mui/material';
+import { IconButton, TextField } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import './category.page.css';
 import { useDispatch, useSelector } from 'react-redux';
 import { getAllCategoriesThunk } from '../../store/category/thunk';
 import CustomDataGrid from '../../Components/CustomDataGrid/customDataGrid';
-
+import AddIcon from '@mui/icons-material/AddBoxSharp';
+import RefreshIcon from '@mui/icons-material/ReplayCircleFilledSharp';
 import CategoryModal from './CategoryModal';
 
 const columns = [
@@ -26,6 +27,7 @@ const columns = [
 
 export default function Category() {
   const dispatch = useDispatch();
+  // const [isOnLoad, setIsOnLoad] = useState(true);
 
   const { categories, isLoading, error } = useSelector((state) => ({
     categories: state.category.data,
@@ -58,12 +60,14 @@ export default function Category() {
     <div className="category">
       <div className="category-actions">
         <h2>Category</h2>
-        <Button
-          sx={{ width: 60, marginRight: '10px' }}
-          onClick={() => setShow(true)}
-          variant="contained">
-          Add
-        </Button>
+        <div>
+          <IconButton onClick={() => setShow(true)} variant="contained">
+            <AddIcon fontSize="large" color="primary"></AddIcon>
+          </IconButton>
+          <IconButton onClick={() => dispatch(getAllCategoriesThunk())} variant="contained">
+            <RefreshIcon fontSize="large" color="primary"></RefreshIcon>
+          </IconButton>
+        </div>
         <TextField
           variant="standard"
           placeholder="Search Category....."

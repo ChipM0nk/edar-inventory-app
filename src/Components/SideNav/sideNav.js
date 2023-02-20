@@ -15,7 +15,9 @@ import { NavLink } from 'react-router-dom';
 export default function Sidenav() {
   const [open, setopen] = useState(true);
   const [menuList, setMenuList] = useState([]);
-  const isLoggedIn = useSelector((state) => state.authenticate.isLoggedIn);
+  const isLoggedIn = useSelector(
+    (state) => state.authenticate.isLoggedIn || localStorage.getItem('token')
+  );
   {
     menuList;
   }

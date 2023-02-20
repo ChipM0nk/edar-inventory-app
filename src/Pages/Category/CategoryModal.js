@@ -1,5 +1,6 @@
 // @ts-nocheck
 import { Button, TextField } from '@mui/material';
+import AlertDialog from 'Components/AlertDialog/alerDialog';
 
 import Modal from 'Components/Modal/Modal';
 import useForm from 'lib/useForm';
@@ -30,18 +31,26 @@ export const stateValidatorSchema = {
 export default function CategoryModal(props) {
   const dispatch = useDispatch();
 
-  const { isSuccess, error } = useSelector((state) => ({
+  const { isSuccess, error, isLoading } = useSelector((state) => ({
     isSuccess: state.category.isSuccess,
-    error: state.category.error
+    error: state.category.crudError,
+    isLoading: state.category.loading
   }));
 
+  const [catAlertOpen, setOpen] = React.useState(false);
+  const handleAlertClose = () => {
+    setOpen(false);
+  };
+
   useEffect(() => {
+    console.log(`isLoading: ${isLoading}`);
     if (isSuccess) {
       resetValues();
     } else if (error) {
-      alert(error);
+      setOpen(true);
     }
-  }, [isSuccess, error]);
+  }, [isLoading, isSuccess, error]);
+
   async function onSubmitForm(state) {
     dispatch(addCategoryThunk(state));
   }
@@ -94,10 +103,17 @@ export default function CategoryModal(props) {
             />
           </div>
         </div>
-        <Button variant="contained" type="submit" disabled={disable}>
-          LOGIN
+        <Button className="modal-button" variant="contained" type="submit" disabled={disable}>
+          SUBMIT
         </Button>
       </form>
+      <AlertDialog
+        title="Category"
+        message={error}
+        error={error ? true : false}
+        open={catAlertOpen}
+        onClose={handleAlertClose}
+      />
     </Modal>
   );
 }

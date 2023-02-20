@@ -11,20 +11,13 @@ import { logoutThunk } from 'store/authenticate/thunk';
 import { useNavigate } from 'react-router-dom';
 import LoginModal from './LoginModal';
 
-// const AppBar = styled('div')(() => ({
-//   height: '50px',
-//   position: 'relative',
-//   gridArea: 'header',
-//   backgroundColor: '#013501'
-// }));
-
 export default function NavBar() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = useState(null);
 
   const { isLoggedIn } = useSelector((state) => ({
-    isLoggedIn: state.authenticate.isLoggedIn
+    isLoggedIn: state.authenticate.isLoggedIn || localStorage.getItem('token')
   }));
 
   useEffect(() => {

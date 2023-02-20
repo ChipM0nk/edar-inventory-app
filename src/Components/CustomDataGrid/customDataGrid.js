@@ -11,7 +11,7 @@ export default function CustomDataGrid(props) {
         columns={props.columns}
         pageSize={10}
         rowHeight={40}
-        rowsPerPageOptions={[5]}
+        rowsPerPageOptions={[10]}
         disableSelectionOnClick
         loading={props.isLoading}
         error={props.error}

@@ -2,7 +2,7 @@
 .category-actions{
     width: 550px;
     display: grid !important;
-    grid-template-columns: auto 65px;
+    grid-template-columns: auto 70px;
     justify-content: space-between;
     align-content: space-around;
     grid-row-gap: 20px;
@@ -11,6 +11,11 @@
     padding: 10px;
     margin-bottom: 20px;
 }
+
+.category-actions button{
+    padding: 0;
+}
+
 
 .category-form{
     display: grid;
@@ -26,7 +31,7 @@
    height: 70px !important;
   }
 
-button{
+.modal-button{
     float: right;
     /* margin: 10px !important; */
 }

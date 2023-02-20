@@ -7,6 +7,7 @@ import Modal from 'Components/Modal/Modal';
 import { useDispatch, useSelector } from 'react-redux';
 import React, { useEffect } from 'react';
 import { loginThunk } from 'store/authenticate/thunk';
+import AlertDialog from 'Components/AlertDialog/alerDialog';
 
 export const stateValidatorSchema = {
   username: {
@@ -36,11 +37,16 @@ export default function LoginModal(props) {
     error: state.authenticate.error
   }));
 
+  const [open, setOpen] = React.useState(false);
+  const handleAlertClose = () => {
+    setOpen(false);
+  };
+
   useEffect(() => {
     if (isLoggedIn) {
       resetValues();
     } else if (error) {
-      alert(error);
+      setOpen(true);
     }
   }, [isLoggedIn, error]);
 
@@ -107,6 +113,13 @@ export default function LoginModal(props) {
           </Grid>
         </Grid>
       </form>
+      <AlertDialog
+        title="Login Error"
+        message={error}
+        error={error ? true : false}
+        open={open}
+        onClose={handleAlertClose}
+      />
     </Modal>
   );
 }
