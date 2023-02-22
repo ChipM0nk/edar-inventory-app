@@ -8,6 +8,8 @@ import { Provider } from 'react-redux';
 import store from './store/index';
 import { createTheme, StyledEngineProvider, ThemeProvider } from '@mui/material/styles';
 const root = ReactDOM.createRoot(document.getElementById('root'));
+import 'react-notifications/lib/notifications.css';
+import { NotificationContainer } from 'react-notifications';
 
 const theme = createTheme({
   palette: {
@@ -35,6 +37,7 @@ root.render(
         <ThemeProvider theme={theme}>
           <StyledEngineProvider injectFirst>
             <App />
+            <NotificationContainer />
           </StyledEngineProvider>
         </ThemeProvider>
       </Provider>

@@ -7,7 +7,7 @@ import Modal from 'Components/Modal/Modal';
 import { useDispatch, useSelector } from 'react-redux';
 import React, { useEffect } from 'react';
 import { loginThunk } from 'store/authenticate/thunk';
-import AlertDialog from 'Components/AlertDialog/alerDialog';
+import CustomDialog from 'Components/CustomDialog/customDialog';
 
 export const stateValidatorSchema = {
   username: {
@@ -113,11 +113,12 @@ export default function LoginModal(props) {
           </Grid>
         </Grid>
       </form>
-      <AlertDialog
+      <CustomDialog
         title="Login Error"
         message={error}
         error={error ? true : false}
         open={open}
+        isAlert
         onClose={handleAlertClose}
       />
     </Modal>

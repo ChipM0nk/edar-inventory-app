@@ -21,13 +21,27 @@ export function categoryIsUpdated(category) {
   };
 }
 
-export function categoryIsLoading() {
+export function categoryIsDeleted(categoryId) {
   return {
-    type: actionTypes.CATEGORY_IS_LOADING,
-    isLoading: true
+    type: actionTypes.CATEGORY_IS_DELETED,
+    categoryId
   };
 }
 
+export function categoryIsLoading() {
+  return {
+    type: actionTypes.CATEGORY_IS_LOADING
+  };
+}
+
+/*
+CRUD
+*/
+export function categoryIsProcessing() {
+  return {
+    type: actionTypes.CATEGORY_IS_PROCESSING
+  };
+}
 export function categoryHasErrored(error, isCrud = true) {
   return {
     type: actionTypes.CATEGORY_HAS_ERRORED,

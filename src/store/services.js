@@ -51,6 +51,28 @@ export const addItem = async (service, addObj) => {
   }
 };
 
+export const deleteItem = async (service, itemId) => {
+  try {
+    const response = await axios({
+      method: 'delete',
+      url: `${API_URL}/admin/${service}/delete/${itemId}`,
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${localStorage.getItem('token')}`
+      }
+    });
+
+    if (response.data.code === '000') {
+      return true;
+    } else {
+      throw Error(response.data.message);
+    }
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+};
+
 export const authenticate = async (credentials) => {
   try {
     const response = await axios({

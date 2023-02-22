@@ -6,9 +6,11 @@ isSucess - for add, update, delete
 const initialState = {
   data: [],
   loading: false,
+  processing: false,
   error: '',
   cruderror: '',
-  isSuccess: false
+  isSaved: false,
+  isDeleted: false
 };
 
 export default function categoryReducer(state = initialState, action) {
@@ -18,6 +20,7 @@ export default function categoryReducer(state = initialState, action) {
         ...state,
         data: action.categories,
         loading: false,
+        processing: false,
         error: ''
       };
 
@@ -26,7 +29,8 @@ export default function categoryReducer(state = initialState, action) {
         ...state,
         data: [action.category, ...state.data],
         loading: false,
-        isSuccess: true,
+        processing: false,
+        isSaved: true,
         cruderror: ''
       };
 
@@ -41,35 +45,45 @@ export default function categoryReducer(state = initialState, action) {
       return {
         ...state,
         data: newCategories,
-        loading: false,
-        isSuccess: true,
-        cruderror: ''
+        processing: false,
+        isSaved: true,
+        cruderror: null
       };
 
     case actionTypes.CATEGORY_IS_DELETED:
       return {
         ...state,
-        data: state.data.filter((category) => category.categoryId !== action.category.categoryId),
-        loading: false,
-        isSuccess: true,
-        cruderror: ''
+        data: state.data.filter((category) => category.categoryId !== action.categoryId),
+        processing: false,
+        cruderror: null,
+        isDeleted: true
       };
 
     case actionTypes.CATEGORY_IS_LOADING:
-      console.log('Loading....');
       return {
         ...state,
         loading: true,
-        isSuccess: false,
+        processing: false,
+        isSaved: false,
         error: ''
       };
 
-    case actionTypes.CATEGORY_HAS_ERRORED:
-      console.log('Error....');
+    case actionTypes.CATEGORY_IS_PROCESSING:
       return {
         ...state,
         loading: false,
-        isSuccess: false,
+        processing: true,
+        isSaved: false,
+        isDeleted: false,
+        cruderror: null
+      };
+
+    case actionTypes.CATEGORY_HAS_ERRORED:
+      return {
+        ...state,
+        loading: false,
+        processing: false,
+        isSaved: false,
         error: action.isCrud ? '' : action.error,
         crudError: action.isCrud ? action.error : ''
       };

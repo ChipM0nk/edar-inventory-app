@@ -1,20 +1,21 @@
 // @ts-nocheck
-import { Button, TextField } from '@mui/material';
-import AlertDialog from 'Components/AlertDialog/alerDialog';
+import { LoadingButton } from '@mui/lab';
+import { TextField } from '@mui/material';
 
 import Modal from 'Components/Modal/Modal';
 import useForm from 'lib/useForm';
 import React, { useEffect } from 'react';
+import { NotificationManager } from 'react-notifications';
 import { useDispatch, useSelector } from 'react-redux';
 import { addCategoryThunk } from 'store/category/thunk';
 
-export const stateValidatorSchema = {
+const stateValidatorSchema = {
   categoryCode: {
     value: '',
     error: '',
     required: true,
     validator: {
-      func: (value) => /^[0-9]{1,5}$/.test(value),
+      func: (value) => /^[a-zA-Z0-9]{1,5}$/.test(value),
       error: 'Input 5 digit code only'
     }
   },
@@ -28,28 +29,25 @@ export const stateValidatorSchema = {
     }
   }
 };
+
 export default function CategoryModal(props) {
   const dispatch = useDispatch();
 
-  const { isSuccess, error, isLoading } = useSelector((state) => ({
-    isSuccess: state.category.isSuccess,
+  const { isSaved, error, isProcessing } = useSelector((state) => ({
+    isSaved: state.category.isSaved,
     error: state.category.crudError,
-    isLoading: state.category.loading
+    isProcessing: state.category.processing
   }));
 
-  const [catAlertOpen, setOpen] = React.useState(false);
-  const handleAlertClose = () => {
-    setOpen(false);
-  };
-
   useEffect(() => {
-    console.log(`isLoading: ${isLoading}`);
-    if (isSuccess) {
+    if (isSaved) {
       resetValues();
-    } else if (error) {
-      setOpen(true);
+      props.onClose();
+      NotificationManager.info('Category Saved....', 'Category', 3000);
+    } else if (error && !isProcessing) {
+      NotificationManager.error(error, 'Category', 3000);
     }
-  }, [isLoading, isSuccess, error]);
+  }, [isProcessing, isSaved, error]);
 
   async function onSubmitForm(state) {
     dispatch(addCategoryThunk(state));
@@ -66,6 +64,7 @@ export default function CategoryModal(props) {
     resetValues();
     props.onClose();
   }
+
   return (
     <Modal
       title={props.isAdd ? 'Add Category' : 'Edit Category'}
@@ -103,17 +102,15 @@ export default function CategoryModal(props) {
             />
           </div>
         </div>
-        <Button className="modal-button" variant="contained" type="submit" disabled={disable}>
+        <LoadingButton
+          className="modal-button"
+          variant="contained"
+          type="submit"
+          loading={isProcessing}
+          disabled={disable}>
           SUBMIT
-        </Button>
+        </LoadingButton>
       </form>
-      <AlertDialog
-        title="Category"
-        message={error}
-        error={error ? true : false}
-        open={catAlertOpen}
-        onClose={handleAlertClose}
-      />
     </Modal>
   );
 }
