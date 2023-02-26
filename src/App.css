@@ -44,3 +44,10 @@ main {
   height: 100%;
 }
 
+
+/**Common CSS**/
+.table-cell-trucate {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

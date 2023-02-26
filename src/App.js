@@ -1,6 +1,8 @@
 // @ts-nocheck
 
 import NavBar from 'Components/NavBar/navBar';
+import Product from 'Pages/Product/Product';
+import Supplier from 'Pages/Supplier/Supplier';
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import './App.css';
@@ -23,6 +25,8 @@ function App() {
           <Route path="/invoices" element={<Invoices />} />
           <Route path="/stockins" element={<Stockins />} />
           <Route path="/category" element={<Category />} />
+          <Route path="/supplier" element={<Supplier />} />
+          <Route path="/product" element={<Product />} />
         </Routes>
       </main>
     </div>

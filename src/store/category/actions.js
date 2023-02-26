@@ -3,7 +3,9 @@ import * as actionTypes from './actionTypes';
 export function categoryFetchSuccess(categories) {
   return {
     type: actionTypes.CATEGORY_FETCH_SUCCESS,
-    categories
+    categories,
+    crudError: null,
+    isSaved: false
   };
 }
 

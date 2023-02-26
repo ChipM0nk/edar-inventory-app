@@ -31,18 +31,16 @@ const theme = createTheme({
 });
 
 root.render(
-  <React.StrictMode>
-    <BrowserRouter>
-      <Provider store={store}>
-        <ThemeProvider theme={theme}>
-          <StyledEngineProvider injectFirst>
-            <App />
-            <NotificationContainer />
-          </StyledEngineProvider>
-        </ThemeProvider>
-      </Provider>
-    </BrowserRouter>
-  </React.StrictMode>
+  <BrowserRouter>
+    <Provider store={store}>
+      <ThemeProvider theme={theme}>
+        <StyledEngineProvider injectFirst>
+          <App />
+          <NotificationContainer />
+        </StyledEngineProvider>
+      </ThemeProvider>
+    </Provider>
+  </BrowserRouter>
 );
 
 // If you want to start measuring performance in your app, pass a function

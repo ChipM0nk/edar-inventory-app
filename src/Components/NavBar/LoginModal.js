@@ -1,34 +1,21 @@
 // @ts-nocheck
 import { Button, Grid, TextField } from '@mui/material';
 
-import useForm from 'lib/useForm';
 import Modal from 'Components/Modal/Modal';
 
 import { useDispatch, useSelector } from 'react-redux';
 import React, { useEffect } from 'react';
 import { loginThunk } from 'store/authenticate/thunk';
 import CustomDialog from 'Components/CustomDialog/customDialog';
+import { useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import * as yup from 'yup';
 
-export const stateValidatorSchema = {
-  username: {
-    value: '',
-    error: '',
-    required: true,
-    validator: {
-      func: () => true,
-      error: ''
-    }
-  },
-  password: {
-    value: '',
-    error: '',
-    required: true,
-    validator: {
-      func: () => true,
-      error: ''
-    }
-  }
-};
+const initSchema = { username: '', password: '' };
+const LoginSchema = yup.object().shape({
+  username: yup.string().required('Username is required'),
+  password: yup.string().required('Password is required')
+});
 
 export default function LoginModal(props) {
   const dispatch = useDispatch();
@@ -54,17 +41,26 @@ export default function LoginModal(props) {
     dispatch(loginThunk(state));
   }
 
-  const { values, handleOnChange, handleOnSubmit, disable, resetValues, errors, dirty } = useForm(
-    stateValidatorSchema,
-    onSubmitForm
-  );
-
-  const { username, password } = values;
-
   function handleClose() {
     resetValues();
     props.onClose();
   }
+
+  function resetValues() {
+    reset(initSchema);
+  }
+
+  /**react-hook-form start */
+
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors, isDirty }
+  } = useForm({
+    resolver: yupResolver(LoginSchema)
+  });
+
   return (
     <Modal
       title="LOGIN"
@@ -76,38 +72,34 @@ export default function LoginModal(props) {
       <form
         className="login-form"
         id="login-form"
-        onSubmit={handleOnSubmit}
+        onSubmit={handleSubmit(onSubmitForm)}
         style={{ textAlign: 'center' }}>
         <Grid container direction={'column'} spacing={3}>
           <Grid item sx={{ height: 60, margin: 1 }}>
             <TextField
-              error={errors.username && dirty.username ? true : false}
+              error={errors.username ? true : false}
               variant="outlined"
               label="Username"
-              name="username"
               size="small"
-              value={username}
+              {...register('username')}
               sx={{ width: 250 }}
-              onChange={handleOnChange}
-              helperText={errors.username && dirty.username && errors.username}
+              helperText={errors.username && errors.username.message}
             />
           </Grid>
           <Grid item sx={{ height: 60, margin: 1 }}>
             <TextField
               variant="outlined"
-              error={errors.password && dirty.password ? true : false}
+              error={errors.password ? true : false}
               label="Password"
-              name="password"
               type="password"
               size="small"
-              value={password}
+              {...register('password')}
               sx={{ width: 250 }}
-              onChange={handleOnChange}
-              helperText={errors.password && dirty.password && errors.password}
+              helperText={errors.password && errors.password.message}
             />
           </Grid>
           <Grid item>
-            <Button variant="contained" type="submit" disabled={disable}>
+            <Button variant="contained" type="submit" disabled={!isDirty}>
               LOGIN
             </Button>
           </Grid>

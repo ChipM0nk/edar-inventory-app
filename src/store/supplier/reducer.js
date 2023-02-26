@@ -4,7 +4,7 @@ import * as actionTypes from './actionTypes';
 isSucess - for add, update, delete
 */
 const initialState = {
-  categories: [],
+  suppliers: [],
   isLoading: false,
   isProcessing: false,
   error: '',
@@ -13,9 +13,9 @@ const initialState = {
   isDeleted: false
 };
 
-export default function categoryReducer(state = initialState, action) {
+export default function supplierReducer(state = initialState, action) {
   switch (action.type) {
-    case actionTypes.CATEGORY_IS_LOADING:
+    case actionTypes.SUPPLIER_IS_LOADING:
       return {
         ...state,
         isLoading: true,
@@ -24,21 +24,22 @@ export default function categoryReducer(state = initialState, action) {
         crudError: null,
         isSaved: false
       };
-    case actionTypes.CATEGORY_FETCH_SUCCESS:
+    case actionTypes.SUPPLIER_FETCH_SUCCESS:
+      // console.log(`Suppliers ::: ${JSON.stringify(action.suppliers)}`);
       return {
         ...state,
-        categories: action.categories,
+        suppliers: action.suppliers,
         isLoading: false,
         isDeleted: false,
         error: '',
-        crudError: action.crudError,
-        isSaved: action.isSaved
+        crudError: null,
+        isSaved: false
       };
 
-    case actionTypes.CATEGORY_IS_ADDED:
+    case actionTypes.SUPPLIER_IS_ADDED:
       return {
         ...state,
-        categories: [action.category, ...state.categories],
+        suppliers: [action.supplier, ...state.suppliers],
         isLoading: false,
         isDeleted: false,
         isProcessing: false,
@@ -46,28 +47,26 @@ export default function categoryReducer(state = initialState, action) {
         crudError: null
       };
 
-    case actionTypes.CATEGORY_IS_UPDATED:
+    case actionTypes.SUPPLIER_IS_UPDATED:
       // eslint-disable-next-line no-case-declarations
-      const index = state.categories.findIndex(
-        (category) => category.categoryId === action.category.categoryId
+      const index = state.suppliers.findIndex(
+        (supplier) => supplier.supplierId === action.supplier.supplierId
       );
       // eslint-disable-next-line no-case-declarations
-      const newCategories = [...state.categories];
-      newCategories[index] = action.category;
+      const newCategories = [...state.suppliers];
+      newCategories[index] = action.supplier;
       return {
         ...state,
-        categories: newCategories,
+        suppliers: newCategories,
         isProcessing: false,
         isSaved: true,
         crudError: null
       };
 
-    case actionTypes.CATEGORY_IS_DELETED:
+    case actionTypes.SUPPLIER_IS_DELETED:
       return {
         ...state,
-        categories: state.categories.filter(
-          (category) => category.categoryId !== action.categoryId
-        ),
+        suppliers: state.suppliers.filter((supplier) => supplier.supplierId !== action.supplierId),
         isProcessing: false,
         crudError: null,
         isSaved: false,
@@ -75,7 +74,7 @@ export default function categoryReducer(state = initialState, action) {
       };
 
     //for CRUD operations
-    case actionTypes.CATEGORY_IS_PROCESSING:
+    case actionTypes.SUPPLIER_IS_PROCESSING:
       return {
         ...state,
         isLoading: false,
@@ -85,7 +84,7 @@ export default function categoryReducer(state = initialState, action) {
         crudError: null
       };
 
-    case actionTypes.CATEGORY_HAS_ERRORED:
+    case actionTypes.SUPPLIER_HAS_ERRORED:
       return {
         ...state,
         isLoading: false,

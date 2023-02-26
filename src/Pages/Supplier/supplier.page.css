@@ -1,6 +1,6 @@
 
-.category-actions{
-    width: 550px;
+.supplier-actions{
+    width: 910px;
     display: grid !important;
     grid-template-columns: auto 70px;
     justify-content: space-between;
@@ -12,24 +12,26 @@
     margin-bottom: 20px;
 }
 
-.category-actions button{
+.supplier-actions button{
     padding: 0;
 }
 
 
-.category-form{
+.supplier-form{
     display: grid;
     height: 200;
-    grid-template-rows: 1fr 1fr;
+    grid-template-rows: 1fr 1.7fr 1fr 1fr;
     grid-template-columns: auto;
     padding: auto;
     justify-content: center;
 
-  }
-  
-  .category-form>div{
-   height: 70px !important;
-  }
+}
+
+
+.supplier-form>div{
+    height: 70px !important;
+}
+
 
 .modal-button{
     /* float: right !important; */

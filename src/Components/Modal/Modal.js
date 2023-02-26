@@ -17,9 +17,14 @@ const Modal = (props) => {
     };
   }, []);
 
+  const nodeRef = React.useRef(null);
   return ReactDOM.createPortal(
-    <CSSTransition in={props.show} unmountOnExit timeout={{ enter: 0, exit: 300 }}>
-      <div className="modal" onClick={props.onClose}>
+    <CSSTransition
+      in={props.show}
+      unmountOnExit
+      timeout={{ enter: 0, exit: 300 }}
+      nodeRef={nodeRef}>
+      <div ref={nodeRef} className="modal" onClick={props.onClose}>
         <div
           className="modal-content"
           style={{ width: props.width, height: props.height }}

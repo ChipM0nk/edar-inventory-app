@@ -3,67 +3,65 @@ import { LoadingButton } from '@mui/lab';
 import { TextField } from '@mui/material';
 
 import Modal from 'Components/Modal/Modal';
-import useForm from 'lib/useForm';
-import React, { useEffect } from 'react';
-import { NotificationManager } from 'react-notifications';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { addCategoryThunk } from 'store/category/thunk';
+import { addCategoryThunk, updateCategoryThunk } from 'store/category/thunk';
+import { useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import * as yup from 'yup';
 
-const stateValidatorSchema = {
-  categoryCode: {
-    value: '',
-    error: '',
-    required: true,
-    validator: {
-      func: (value) => /^[a-zA-Z0-9]{1,5}$/.test(value),
-      error: 'Input 5 digit code only'
-    }
-  },
-  categoryName: {
-    value: '',
-    error: '',
-    required: true,
-    validator: {
-      func: (value) => /^[a-zA-Z0-9///" ]+$/.test(value),
-      error: 'Invalid Category Name'
-    }
-  }
-};
+const CategorySchema = yup.object().shape({
+  categoryCode: yup
+    .string()
+    .required('Category Code is required')
+    .matches(/^[a-zA-Z0-9]{3,6}$/, 'Please input 3-6 alphanumeric characters'),
+  categoryName: yup
+    .string()
+    .required('Category Name is required')
+    .matches(/^[a-zA-Z0-9///" ]{3,50}$/, 'Please input 3-50 alphanumeric characters')
+});
 
 export default function CategoryModal(props) {
   const dispatch = useDispatch();
+  const [category, setCategoryState] = useState(props.category);
+  const [show, setShow] = useState(props.category);
+  if (props.show !== show) setShow(props.show);
 
-  const { isSaved, error, isProcessing } = useSelector((state) => ({
-    isSaved: state.category.isSaved,
-    error: state.category.crudError,
-    isProcessing: state.category.processing
-  }));
+  if (props.category !== category) setCategoryState(props.category);
 
-  useEffect(() => {
-    if (isSaved) {
-      resetValues();
-      props.onClose();
-      NotificationManager.info('Category Saved....', 'Category', 3000);
-    } else if (error && !isProcessing) {
-      NotificationManager.error(error, 'Category', 3000);
-    }
-  }, [isProcessing, isSaved, error]);
-
-  async function onSubmitForm(state) {
-    dispatch(addCategoryThunk(state));
-  }
-
-  const { values, handleOnChange, handleOnSubmit, disable, resetValues, errors, dirty } = useForm(
-    stateValidatorSchema,
-    onSubmitForm
-  );
-
-  const { categoryCode, categoryName } = values;
+  const { isProcessing } = useSelector((state) => state.category.isProcessing);
 
   function handleClose() {
-    resetValues();
     props.onClose();
+    reset(props.initSchema);
   }
+
+  /**react-hook-form start */
+
+  useEffect(() => {
+    reset(category);
+  }, [category]);
+
+  useEffect(() => {
+    if (!show) handleClose();
+  }, [show]);
+
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors, isDirty }
+  } = useForm({
+    resolver: yupResolver(CategorySchema)
+  });
+
+  const onSubmit = (data) => {
+    if (props.isAdd) {
+      dispatch(addCategoryThunk(data));
+    } else {
+      dispatch(updateCategoryThunk({ ...category, ...data }));
+    }
+  };
 
   return (
     <Modal
@@ -71,45 +69,56 @@ export default function CategoryModal(props) {
       show={props.show}
       onClose={handleClose}
       height={250}
-      width={300}>
-      <form onSubmit={handleOnSubmit}>
+      width={350}>
+      <form onSubmit={handleSubmit(onSubmit)}>
         <div className="category-form" id="category-form">
           <div>
             <TextField
-              error={errors.categoryCode && dirty.categoryCode ? true : false}
+              error={errors.categoryCode ? true : false}
               variant="outlined"
               label="Category Code"
-              name="categoryCode"
               size="small"
+              {...register('categoryCode')}
               style={{ textAlign: 'center' }}
-              value={categoryCode}
-              sx={{ width: 250 }}
-              onChange={handleOnChange}
-              helperText={errors.categoryCode && dirty.categoryCode && errors.categoryCode}
+              sx={{ width: 300 }}
+              inputProps={{ maxLength: 6 }}
+              helperText={errors.categoryCode && errors.categoryCode.message}
             />
           </div>
           <div>
             <TextField
               variant="outlined"
-              error={errors.categoryName && dirty.categoryName ? true : false}
+              error={errors.categoryName ? true : false}
               label="Category Name"
-              name="categoryName"
               size="small"
-              value={categoryName}
-              sx={{ width: 250 }}
-              onChange={handleOnChange}
-              helperText={errors.categoryName && dirty.categoryName && errors.categoryName}
+              {...register('categoryName')}
+              sx={{ width: 300 }}
+              inputProps={{ maxLength: 50 }}
+              helperText={errors.categoryName && errors.categoryName.message}
             />
           </div>
         </div>
-        <LoadingButton
-          className="modal-button"
-          variant="contained"
-          type="submit"
-          loading={isProcessing}
-          disabled={disable}>
-          SUBMIT
-        </LoadingButton>
+        <div className="button-div">
+          <LoadingButton
+            className="modal-button"
+            variant="contained"
+            type="submit"
+            loading={isProcessing}
+            disabled={!isDirty}>
+            SUBMIT
+          </LoadingButton>
+          <LoadingButton
+            className="modal-button"
+            variant="contained"
+            onClick={() => {
+              const init = props.isAdd ? props.initSchema : props.category;
+              reset(init);
+            }}
+            loading={isProcessing}
+            disabled={!isDirty}>
+            RESET
+          </LoadingButton>
+        </div>
       </form>
     </Modal>
   );

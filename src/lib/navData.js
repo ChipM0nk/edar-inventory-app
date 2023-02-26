@@ -6,7 +6,9 @@ import {
   PointOfSale,
   ShoppingBasket,
   ShoppingCart,
-  ShopTwo
+  ShopTwo,
+  FactoryRounded,
+  Shower
 } from '@mui/icons-material';
 export const navData = [
   {
@@ -14,7 +16,7 @@ export const navData = [
     icon: <Home style={{ color: 'white' }} />,
     name: 'Home',
     text: 'Home',
-    link: '/home'
+    link: 'home'
   },
   {
     id: 0,
@@ -50,5 +52,19 @@ export const navData = [
     name: 'Category',
     text: 'Category',
     link: 'category'
+  },
+  {
+    id: 5,
+    icon: <FactoryRounded />,
+    name: 'Supplier',
+    text: 'Supplier',
+    link: 'supplier'
+  },
+  {
+    id: 6,
+    icon: <Shower />,
+    name: 'Product',
+    text: 'Product',
+    link: 'product'
   }
 ];

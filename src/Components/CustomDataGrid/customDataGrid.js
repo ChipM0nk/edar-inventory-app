@@ -7,8 +7,8 @@ export default function CustomDataGrid(props) {
   return (
     <Box sx={{ height: 550, width: 800, color: '#153d02' }}>
       <DataGrid
-        rows={props.categories}
-        getRowId={(row) => row.categoryId}
+        rows={props.items}
+        getRowId={(row) => row[props.itemId]}
         columns={props.columns}
         pageSize={ps}
         onPageSizeChange={(newPageSize) => setPs(newPageSize)}
@@ -25,7 +25,7 @@ export default function CustomDataGrid(props) {
             display: 'none'
           }
         }}
-        onRowClick={props.onRowClick}
+        onRowClick={(item) => props.onRowClick(item.row)}
       />
     </Box>
   );

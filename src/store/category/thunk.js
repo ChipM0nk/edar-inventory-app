@@ -26,6 +26,18 @@ export const addCategoryThunk = (addObj) => {
   };
 };
 
+export const updateCategoryThunk = (updateObj) => {
+  return async (dispatch) => {
+    try {
+      dispatch(categoryActions.categoryIsProcessing());
+      const category = await addItem('category', updateObj);
+      dispatch(categoryActions.categoryIsUpdated(category));
+    } catch (error) {
+      dispatch(categoryActions.categoryHasErrored(error.message));
+    }
+  };
+};
+
 export const deleteCategoryThunk = (categoryId) => {
   return async (dispatch) => {
     try {
