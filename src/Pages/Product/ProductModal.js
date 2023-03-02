@@ -1,14 +1,17 @@
 // @ts-nocheck
 import { LoadingButton } from '@mui/lab';
 import { TextField } from '@mui/material';
-
 import Modal from 'Components/Modal/Modal';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { addProductThunk, updateProductThunk } from 'store/product/thunk';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
+import { CustomAutoComplete } from 'Components/Common/customAutoComplete';
+
+/** KNOWN ISSUE */
+//reset not resetting category and supplier value on product edit
 
 const ProductSchema = yup.object().shape({
   productCode: yup
@@ -18,11 +21,18 @@ const ProductSchema = yup.object().shape({
   productName: yup
     .string()
     .required('Product Name is required')
-    .matches(/^[a-zA-Z0-9/-///" ]{2,50}$/, 'Please input 2-50 alphanumeric characters'),
+    .max(50, 'Maximum of 50 characters only'),
   productDescription: yup
     .string()
-    .required('Product Address is required')
-    .matches(/^[a-zA-Z0-9#/-///\r\n" ]{3,150}$/, 'Please input 3-150 alphanumeric characters'),
+    .required('Product Description is required')
+    .max(50, 'Maximum of 150 characters only'),
+  category: yup.object().shape({
+    categoryId: yup.string().required('Please select a category'),
+    categoryName: yup.string().required('Please select a category')
+  }),
+  supplier: yup.object().shape({
+    supplierId: yup.number().required('Please select a supplier')
+  }),
   productPrice: yup
     .number()
     .test(
@@ -36,19 +46,34 @@ const ProductSchema = yup.object().shape({
     .matches(/^[a-zA-Z]{1,10}$/, 'Please input 1-10 alpha numeric characters')
 });
 
-export default function ProductModal(props) {
+export default function ProductModal({
+  product,
+  show,
+  isAdd,
+  initSchema,
+  onClose,
+  categories,
+  suppliers
+}) {
   const dispatch = useDispatch();
-  const [product, setProductState] = useState(props.product);
-  const [show, setShow] = useState(props.product);
-  if (props.show !== show) setShow(props.show);
 
-  if (props.product !== product) setProductState(props.product);
+  // const [product, setProductState] = useState(product);
+  // const [show, setShow] = useState(show);
+  // const [categories, setCategories] = useState(categories);
+  // const [suppliers, setSuppliers] = useState(suppliers);
+  // if (show !== show) setShow(show);
+  // if (product !== product) setProductState(product);
+  // if (categories !== categories) setCategories(categories);
+  // if (suppliers !== suppliers) setSuppliers(suppliers);
 
+  // //test
+  // const [tests, setTests] = useState(tests);
+  // if (tests !== tests) setTests(tests);
   const { isProcessing } = useSelector((state) => state.product.isProcessing);
 
   function handleClose() {
-    props.onClose();
-    reset(props.initSchema);
+    onClose();
+    reset(initSchema);
   }
 
   /**react-hook-form start */
@@ -65,128 +90,125 @@ export default function ProductModal(props) {
     register,
     handleSubmit,
     reset,
-    formState: { errors, isDirty }
+    formState: { errors, isDirty },
+    control
   } = useForm({
     resolver: yupResolver(ProductSchema)
   });
 
   const onSubmit = (data) => {
-    if (props.isAdd) {
+    if (isAdd) {
       dispatch(addProductThunk(data));
     } else {
       dispatch(updateProductThunk({ ...product, ...data }));
     }
   };
+  const onInvalid = (errors) => console.error(errors);
+
+  // const useStyles = makeStyles({
+  //   option: {
+  //     fontSize: 15,
+  //     '& > span': {
+  //       marginRight: 10,
+  //       fontSize: 18
+  //     }
+  //   }
+  // });
+
+  // const classes = useStyles();
 
   return (
     <Modal
-      title={props.isAdd ? 'Add Product' : 'Edit Product'}
-      show={props.show}
+      title={isAdd ? 'Add Product' : 'Edit Product'}
+      show={show}
       onClose={handleClose}
       height={550}
       width={700}>
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <form onSubmit={handleSubmit(onSubmit, onInvalid)}>
         <div className="product-form" id="product-form">
-          <div>
-            <TextField
-              error={errors.productCode ? true : false}
-              variant="outlined"
-              label="Product Code"
-              size="small"
-              {...register('productCode')}
-              style={{ textAlign: 'center' }}
-              sx={{ width: 300 }}
-              inputProps={{ maxLength: 50 }}
-              helperText={errors.productCode && errors.productCode.message}
-            />
-          </div>
-          <div>
-            <TextField
-              error={errors.productName ? true : false}
-              variant="outlined"
-              label="Product Name"
-              size="small"
-              {...register('productName')}
-              style={{ textAlign: 'center' }}
-              sx={{ width: 300 }}
-              inputProps={{ maxLength: 50 }}
-              helperText={errors.productName && errors.productName.message}
-            />
-          </div>
-          <div>
-            <TextField
-              variant="outlined"
-              error={errors.productDescription ? true : false}
-              label="Product Description"
-              size="small"
-              multiline
-              rows={3}
-              {...register('productDescription')}
-              sx={{ width: 630 }}
-              inputProps={{ maxLength: 150 }}
-              helperText={errors.productDescription && errors.productDescription.message}
-            />
-          </div>
-          <div>
-            <TextField
-              variant="outlined"
-              error={errors.productPrice ? true : false}
-              label="Email Address"
-              size="small"
-              {...register('productPrice')}
-              sx={{ width: 300 }}
-              inputProps={{ maxLength: 50 }}
-              helperText={errors.productPrice && errors.productPrice.message}
-            />
-          </div>
-          <div>
-            <TextField
-              variant="outlined"
-              error={errors.productPrice ? true : false}
-              label="Contact Number"
-              size="small"
-              {...register('productContactNumber')}
-              sx={{ width: 300 }}
-              inputProps={{ maxLength: 50 }}
-              helperText={errors.productPrice && errors.productPrice.message}
-            />
-          </div>
-          <div>
-            <TextField
-              variant="outlined"
-              error={errors.productPrice ? true : false}
-              label="Contact Number"
-              size="small"
-              {...register('productContactNumber')}
-              sx={{ width: 300 }}
-              inputProps={{ maxLength: 50 }}
-              helperText={errors.productPrice && errors.productPrice.message}
-            />
-          </div>
-          <div>
-            <TextField
-              variant="outlined"
-              error={errors.productPrice ? true : false}
-              label="Contact Number"
-              size="small"
-              {...register('productContactNumber')}
-              sx={{ width: 300 }}
-              inputProps={{ maxLength: 50 }}
-              helperText={errors.productPrice && errors.productPrice.message}
-            />
-          </div>
-          <div>
-            <TextField
-              variant="outlined"
-              error={errors.productPrice ? true : false}
-              label="Contact Number"
-              size="small"
-              {...register('productContactNumber')}
-              sx={{ width: 300 }}
-              inputProps={{ maxLength: 50 }}
-              helperText={errors.productPrice && errors.productPrice.message}
-            />
-          </div>
+          <TextField
+            error={errors.productCode ? true : false}
+            variant="outlined"
+            label="Product Code"
+            size="small"
+            {...register('productCode')}
+            style={{ textAlign: 'center' }}
+            sx={{ width: 300 }}
+            inputProps={{ maxLength: 50 }}
+            helperText={errors.productCode && errors.productCode.message}
+          />
+
+          <TextField
+            error={errors.productName ? true : false}
+            variant="outlined"
+            label="Product Name"
+            size="small"
+            {...register('productName')}
+            style={{ textAlign: 'center' }}
+            sx={{ width: 300 }}
+            inputProps={{ maxLength: 50 }}
+            helperText={errors.productName && errors.productName.message}
+          />
+
+          <TextField
+            variant="outlined"
+            error={errors.productDescription ? true : false}
+            label="Product Description"
+            size="small"
+            multiline
+            rows={3}
+            {...register('productDescription')}
+            sx={{ width: 630 }}
+            inputProps={{ maxLength: 150 }}
+            helperText={errors.productDescription && errors.productDescription.message}
+          />
+
+          <CustomAutoComplete
+            options={categories}
+            control={control}
+            name="category.categoryId"
+            placeholder="Select Category"
+            optionId="categoryId"
+            optionLabel="categoryName"></CustomAutoComplete>
+
+          <TextField
+            variant="outlined"
+            error={errors.productPrice ? true : false}
+            label="Selling Price"
+            size="small"
+            {...register('productPrice')}
+            sx={{ width: 300 }}
+            inputProps={{ maxLength: 50 }}
+            helperText={errors.productPrice && errors.productPrice.message}
+          />
+
+          <CustomAutoComplete
+            options={suppliers}
+            control={control}
+            name="supplier.supplierId"
+            placeholder="Select Supplier"
+            optionId="supplierId"
+            optionLabel="supplierName"></CustomAutoComplete>
+
+          <TextField
+            variant="outlined"
+            error={errors.unit ? true : false}
+            label="Unit"
+            size="small"
+            {...register('unit')}
+            sx={{ width: 300 }}
+            inputProps={{ maxLength: 50 }}
+            helperText={errors.unit && errors.unit.message}
+          />
+
+          <TextField
+            variant="outlined"
+            label="Current Stock"
+            size="small"
+            defaultValue={product?.currentStock}
+            disabled
+            sx={{ width: 300 }}
+          />
         </div>
         <div className="button-div">
           <LoadingButton
@@ -201,7 +223,7 @@ export default function ProductModal(props) {
             className="modal-button"
             variant="contained"
             onClick={() => {
-              const init = props.isAdd ? props.initSchema : props.product;
+              const init = isAdd ? initSchema : product;
               reset(init);
             }}
             loading={isProcessing}

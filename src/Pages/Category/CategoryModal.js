@@ -3,7 +3,7 @@ import { LoadingButton } from '@mui/lab';
 import { TextField } from '@mui/material';
 
 import Modal from 'Components/Modal/Modal';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { addCategoryThunk, updateCategoryThunk } from 'store/category/thunk';
 import { useForm } from 'react-hook-form';
@@ -21,19 +21,18 @@ const CategorySchema = yup.object().shape({
     .matches(/^[a-zA-Z0-9///" ]{3,50}$/, 'Please input 3-50 alphanumeric characters')
 });
 
-export default function CategoryModal(props) {
+export default function CategoryModal({ category, show, isAdd, initSchema, onClose }) {
   const dispatch = useDispatch();
-  const [category, setCategoryState] = useState(props.category);
-  const [show, setShow] = useState(props.category);
-  if (props.show !== show) setShow(props.show);
-
-  if (props.category !== category) setCategoryState(props.category);
+  // const [category, setCategoryState] = useState(category);
+  // const [show, setShow] = useState(category);
+  // if (show !== show) setShow(show);
+  // if (category !== category) setCategoryState(category);
 
   const { isProcessing } = useSelector((state) => state.category.isProcessing);
 
   function handleClose() {
-    props.onClose();
-    reset(props.initSchema);
+    onClose();
+    reset(initSchema);
   }
 
   /**react-hook-form start */
@@ -56,7 +55,7 @@ export default function CategoryModal(props) {
   });
 
   const onSubmit = (data) => {
-    if (props.isAdd) {
+    if (isAdd) {
       dispatch(addCategoryThunk(data));
     } else {
       dispatch(updateCategoryThunk({ ...category, ...data }));
@@ -65,38 +64,35 @@ export default function CategoryModal(props) {
 
   return (
     <Modal
-      title={props.isAdd ? 'Add Category' : 'Edit Category'}
-      show={props.show}
+      title={isAdd ? 'Add Category' : 'Edit Category'}
+      show={show}
       onClose={handleClose}
       height={250}
       width={350}>
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="category-form" id="category-form">
-          <div>
-            <TextField
-              error={errors.categoryCode ? true : false}
-              variant="outlined"
-              label="Category Code"
-              size="small"
-              {...register('categoryCode')}
-              style={{ textAlign: 'center' }}
-              sx={{ width: 300 }}
-              inputProps={{ maxLength: 6 }}
-              helperText={errors.categoryCode && errors.categoryCode.message}
-            />
-          </div>
-          <div>
-            <TextField
-              variant="outlined"
-              error={errors.categoryName ? true : false}
-              label="Category Name"
-              size="small"
-              {...register('categoryName')}
-              sx={{ width: 300 }}
-              inputProps={{ maxLength: 50 }}
-              helperText={errors.categoryName && errors.categoryName.message}
-            />
-          </div>
+          <TextField
+            error={errors.categoryCode ? true : false}
+            variant="outlined"
+            label="Category Code"
+            size="small"
+            {...register('categoryCode')}
+            style={{ textAlign: 'center' }}
+            sx={{ width: 300 }}
+            inputProps={{ maxLength: 6 }}
+            helperText={errors.categoryCode && errors.categoryCode.message}
+          />
+
+          <TextField
+            variant="outlined"
+            error={errors.categoryName ? true : false}
+            label="Category Name"
+            size="small"
+            {...register('categoryName')}
+            sx={{ width: 300 }}
+            inputProps={{ maxLength: 50 }}
+            helperText={errors.categoryName && errors.categoryName.message}
+          />
         </div>
         <div className="button-div">
           <LoadingButton
@@ -111,7 +107,7 @@ export default function CategoryModal(props) {
             className="modal-button"
             variant="contained"
             onClick={() => {
-              const init = props.isAdd ? props.initSchema : props.category;
+              const init = isAdd ? initSchema : category;
               reset(init);
             }}
             loading={isProcessing}

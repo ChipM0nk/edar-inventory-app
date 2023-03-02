@@ -1,6 +1,5 @@
 
 .product-actions{
-    width: 1030px;
     display: grid !important;
     grid-template-columns: auto 70px;
     justify-content: space-between;
@@ -17,10 +16,23 @@
     padding: 0;
 }
 
+/*override mui select padding*/
+.MuiSelect-select{
+    padding: 8.5px 14px !important
+}
+
+/* .MuiFormHelperText-root{
+    margin: 10;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    height: 100px !important;
+} */
 
 .product-form{
+    
     display: grid;
-    height: 550;
+    margin-top: 30px;
     margin-left: 20px;
     grid-template-rows: 1fr 1.7fr 1fr 1fr 1fr;
     grid-template-columns: 1fr 1fr;

@@ -27,9 +27,9 @@
 
   }
   
-  .category-form>div{
+.category-form>div{
    height: 70px !important;
-  }
+}
 
 .modal-button{
     /* float: right !important; */

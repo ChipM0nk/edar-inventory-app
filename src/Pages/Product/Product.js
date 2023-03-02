@@ -11,13 +11,21 @@ import { NotificationManager } from 'react-notifications';
 import ProductModal from './ProductModal';
 import CustomDialog from 'Components/CustomDialog/customDialog';
 import './product.page.css';
+import { getAllCategoriesThunk } from 'store/category/thunk';
+import { getAllSuppliersThunk } from 'store/supplier/thunk';
 
 const initSchema = {
+  productCode: '',
   productName: '',
-  productAddress: '',
-  productEmailAdd: '',
-  productContactNumber: ''
+  productDescription: '',
+  category: {},
+  supplier: {},
+  productPrice: 0,
+  unit: '',
+  currentStock: 0
 };
+
+const width = 1030;
 export default function Product() {
   /**MUI Datagrid column def start */
 
@@ -194,13 +202,23 @@ export default function Product() {
   const onLoad = useRef(true);
   useEffect(() => {
     dispatch(getAllProductsThunk());
+
+    /** Load categories and supplier here to save performance */
+    dispatch(getAllCategoriesThunk());
+    dispatch(getAllSuppliersThunk());
     onLoad.current = false;
   }, [dispatch]);
 
   /**For onload end */
+
+  /** Get categories and supplier from state */
+  //TODO: handle errors loading Category and supplier
+  const { categories } = useSelector((state) => state.category);
+  const { suppliers } = useSelector((state) => state.supplier);
+
   return (
     <div className='="product'>
-      <div className="product-actions">
+      <div className="product-actions" style={{ width: width }}>
         <h2>Products</h2>
         <div>
           <IconButton onClick={onAddClick} variant="contained">
@@ -226,10 +244,19 @@ export default function Product() {
         columns={columns}
         isLoading={isLoading}
         error={error}
-        width={1030}
+        width={width}
         onRowClick={onRowClick}
       />
-      <ProductModal show={show} isAdd={isAdd} onClose={() => setShow(false)} product={product} />
+      <ProductModal
+        show={show}
+        isAdd={isAdd}
+        onClose={() => setShow(false)}
+        // product={{ ...product, test: 'two' }}
+        product={product}
+        categories={categories}
+        suppliers={suppliers}
+        // tests={['one', 'two']}
+      />
       <CustomDialog
         title="Delete Product"
         message="Are you sure you want to delete this product?"

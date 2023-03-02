@@ -3,7 +3,7 @@ import { LoadingButton } from '@mui/lab';
 import { TextField } from '@mui/material';
 
 import Modal from 'Components/Modal/Modal';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { addSupplierThunk, updateSupplierThunk } from 'store/supplier/thunk';
 import { useForm } from 'react-hook-form';
@@ -29,19 +29,19 @@ const SupplierSchema = yup.object().shape({
     .matches(/^[a-zA-Z0-9/-///"/+ ]{3,50}$/, 'Please input valid phone number')
 });
 
-export default function SupplierModal(props) {
+export default function SupplierModal({ supplier, show, isAdd, initSchema, onClose }) {
   const dispatch = useDispatch();
-  const [supplier, setSupplierState] = useState(props.supplier);
-  const [show, setShow] = useState(props.supplier);
-  if (props.show !== show) setShow(props.show);
+  // const [supplier, setSupplierState] = useState(supplier);
+  // const [show, setShow] = useState(supplier);
+  // if (show !== show) setShow(show);
 
-  if (props.supplier !== supplier) setSupplierState(props.supplier);
+  // if (supplier !== supplier) setSupplierState(supplier);
 
   const { isProcessing } = useSelector((state) => state.supplier.isProcessing);
 
   function handleClose() {
-    props.onClose();
-    reset(props.initSchema);
+    onClose();
+    reset(initSchema);
   }
 
   /**react-hook-form start */
@@ -64,7 +64,7 @@ export default function SupplierModal(props) {
   });
 
   const onSubmit = (data) => {
-    if (props.isAdd) {
+    if (isAdd) {
       dispatch(addSupplierThunk(data));
     } else {
       dispatch(updateSupplierThunk({ ...supplier, ...data }));
@@ -73,64 +73,59 @@ export default function SupplierModal(props) {
 
   return (
     <Modal
-      title={props.isAdd ? 'Add Supplier' : 'Edit Supplier'}
-      show={props.show}
+      title={isAdd ? 'Add Supplier' : 'Edit Supplier'}
+      show={show}
       onClose={handleClose}
       height={450}
       width={350}>
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="supplier-form" id="supplier-form">
-          <div>
-            <TextField
-              error={errors.supplierName ? true : false}
-              variant="outlined"
-              label="Supplier Name"
-              size="small"
-              {...register('supplierName')}
-              style={{ textAlign: 'center' }}
-              sx={{ width: 300 }}
-              inputProps={{ maxLength: 50 }}
-              helperText={errors.supplierName && errors.supplierName.message}
-            />
-          </div>
-          <div>
-            <TextField
-              variant="outlined"
-              error={errors.supplierAddress ? true : false}
-              label="Supplier Address"
-              size="small"
-              multiline
-              rows={3}
-              {...register('supplierAddress')}
-              sx={{ width: 300 }}
-              inputProps={{ maxLength: 150 }}
-              helperText={errors.supplierAddress && errors.supplierAddress.message}
-            />
-          </div>
-          <div>
-            <TextField
-              variant="outlined"
-              error={errors.supplierEmailAdd ? true : false}
-              label="Email Address"
-              size="small"
-              {...register('supplierEmailAdd')}
-              sx={{ width: 300 }}
-              inputProps={{ maxLength: 50 }}
-              helperText={errors.supplierEmailAdd && errors.supplierEmailAdd.message}
-            />
-          </div>
-          <div>
-            <TextField
-              variant="outlined"
-              error={errors.supplierContactNumber ? true : false}
-              label="Contact Number"
-              size="small"
-              {...register('supplierContactNumber')}
-              sx={{ width: 300 }}
-              inputProps={{ maxLength: 50 }}
-              helperText={errors.supplierContactNumber && errors.supplierContactNumber.message}
-            />
-          </div>
+          <TextField
+            error={errors.supplierName ? true : false}
+            variant="outlined"
+            label="Supplier Name"
+            size="small"
+            {...register('supplierName')}
+            style={{ textAlign: 'center' }}
+            sx={{ width: 300 }}
+            inputProps={{ maxLength: 50 }}
+            helperText={errors.supplierName && errors.supplierName.message}
+          />
+
+          <TextField
+            variant="outlined"
+            error={errors.supplierAddress ? true : false}
+            label="Supplier Address"
+            size="small"
+            multiline
+            rows={3}
+            {...register('supplierAddress')}
+            sx={{ width: 300 }}
+            inputProps={{ maxLength: 150 }}
+            helperText={errors.supplierAddress && errors.supplierAddress.message}
+          />
+
+          <TextField
+            variant="outlined"
+            error={errors.supplierEmailAdd ? true : false}
+            label="Email Address"
+            size="small"
+            {...register('supplierEmailAdd')}
+            sx={{ width: 300 }}
+            inputProps={{ maxLength: 50 }}
+            helperText={errors.supplierEmailAdd && errors.supplierEmailAdd.message}
+          />
+
+          <TextField
+            variant="outlined"
+            error={errors.supplierContactNumber ? true : false}
+            label="Contact Number"
+            size="small"
+            {...register('supplierContactNumber')}
+            sx={{ width: 300 }}
+            inputProps={{ maxLength: 50 }}
+            helperText={errors.supplierContactNumber && errors.supplierContactNumber.message}
+          />
         </div>
         <div className="button-div">
           <LoadingButton
@@ -145,7 +140,7 @@ export default function SupplierModal(props) {
             className="modal-button"
             variant="contained"
             onClick={() => {
-              const init = props.isAdd ? props.initSchema : props.supplier;
+              const init = isAdd ? initSchema : supplier;
               reset(init);
             }}
             loading={isProcessing}
