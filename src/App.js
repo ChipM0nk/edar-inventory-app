@@ -10,7 +10,7 @@ import Sidenav from './Components/SideNav/sideNav';
 import Category from './Pages/Category/Category';
 import InvoiceForm from './Pages/InvoiceForm';
 import Invoices from './Pages/Invoices';
-import StockInForm from './Pages/StockInForm';
+import StockInForm from './Pages/StockInForm/StockInForm';
 import Stockins from './Pages/StockIns';
 
 function App() {

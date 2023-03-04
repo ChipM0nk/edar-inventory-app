@@ -17,6 +17,9 @@ code {
   font-size: 13px;
 }
 
+.MuiOutlinedInput-input {
+  padding: 8.5px 14px !important;
+}
 /*
 All Datagrid 
 */

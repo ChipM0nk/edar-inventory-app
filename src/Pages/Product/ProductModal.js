@@ -10,9 +10,6 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { CustomAutoComplete } from 'Components/Common/customAutoComplete';
 
-/** KNOWN ISSUE */
-//reset not resetting category and supplier value on product edit
-
 const ProductSchema = yup.object().shape({
   productCode: yup
     .string()
@@ -57,18 +54,6 @@ export default function ProductModal({
 }) {
   const dispatch = useDispatch();
 
-  // const [product, setProductState] = useState(product);
-  // const [show, setShow] = useState(show);
-  // const [categories, setCategories] = useState(categories);
-  // const [suppliers, setSuppliers] = useState(suppliers);
-  // if (show !== show) setShow(show);
-  // if (product !== product) setProductState(product);
-  // if (categories !== categories) setCategories(categories);
-  // if (suppliers !== suppliers) setSuppliers(suppliers);
-
-  // //test
-  // const [tests, setTests] = useState(tests);
-  // if (tests !== tests) setTests(tests);
   const { isProcessing } = useSelector((state) => state.product.isProcessing);
 
   function handleClose() {
@@ -104,18 +89,6 @@ export default function ProductModal({
     }
   };
   const onInvalid = (errors) => console.error(errors);
-
-  // const useStyles = makeStyles({
-  //   option: {
-  //     fontSize: 15,
-  //     '& > span': {
-  //       marginRight: 10,
-  //       fontSize: 18
-  //     }
-  //   }
-  // });
-
-  // const classes = useStyles();
 
   return (
     <Modal
@@ -166,10 +139,12 @@ export default function ProductModal({
           <CustomAutoComplete
             options={categories}
             control={control}
+            width={300}
             name="category.categoryId"
             placeholder="Select Category"
             optionId="categoryId"
-            optionLabel="categoryName"></CustomAutoComplete>
+            optionLabel="categoryName"
+          />
 
           <TextField
             variant="outlined"
@@ -185,10 +160,12 @@ export default function ProductModal({
           <CustomAutoComplete
             options={suppliers}
             control={control}
+            width={300}
             name="supplier.supplierId"
             placeholder="Select Supplier"
             optionId="supplierId"
-            optionLabel="supplierName"></CustomAutoComplete>
+            optionLabel="supplierName"
+          />
 
           <TextField
             variant="outlined"

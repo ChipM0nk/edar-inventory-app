@@ -1,0 +1,18 @@
+.stock-in-form{
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    /* padding: auto; */
+    grid-row-gap: 30px; 
+    /* column-gap:50px;  */
+    /* grid-gap: auto; */
+    /* justify-content: space-between !important; */
+    /* align-content: space-between; */
+    width:850px !important;
+}
+
+.stock-in-form div:nth-child(4){
+    grid-row: 2;
+    grid-column: 1 / 5;
+    width: 818px !important
+}

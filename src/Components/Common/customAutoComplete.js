@@ -17,7 +17,7 @@ export const CustomAutoComplete = (props) => {
       render={({ field, fieldState: { error } }) => {
         const { onChange, value, ref } = field;
         return (
-          <div>
+          <div style={{ width: props.width ?? 250 }}>
             <Autocomplete
               value={
                 value
@@ -26,6 +26,7 @@ export const CustomAutoComplete = (props) => {
                     }) ?? null
                   : null
               }
+              sx={{ width: props.width ?? 250 }}
               getOptionLabel={(option) => {
                 return option[props.optionLabel];
               }}
@@ -40,7 +41,7 @@ export const CustomAutoComplete = (props) => {
                   error={error?.message ? true : false}
                   label={props.placeholder}
                   inputRef={ref}
-                  sx={{ width: 300, padding: 0 }}
+                  sx={{ width: props.width ?? 250 }}
                   helperText={error?.message ?? ''}
                 />
               )}

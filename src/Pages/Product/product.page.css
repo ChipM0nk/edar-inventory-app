@@ -21,14 +21,6 @@
     padding: 8.5px 14px !important
 }
 
-/* .MuiFormHelperText-root{
-    margin: 10;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    overflow: hidden;
-    height: 100px !important;
-} */
-
 .product-form{
     
     display: grid;
