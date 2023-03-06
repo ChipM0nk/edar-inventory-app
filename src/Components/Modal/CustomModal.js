@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import { CSSTransition } from 'react-transition-group';
 import './modal.css';
 
-const Modal = (props) => {
+const CustomModal = (props) => {
   const closeOnEscapeKeyDown = (e) => {
     if ((e.charCode || e.keyCode) === 27) {
       props.onClose();
@@ -53,4 +53,4 @@ const Modal = (props) => {
   );
 };
 
-export default Modal;
+export default CustomModal;

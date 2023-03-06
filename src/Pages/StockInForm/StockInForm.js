@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 // @ts-nocheck
-import { Box, TextField } from '@mui/material';
-import React, { useEffect, useRef } from 'react';
+import { Box, IconButton, TextField, Typography } from '@mui/material';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
@@ -11,125 +11,54 @@ import { CustomAutoComplete } from 'Components/Common/customAutoComplete';
 import { DatePicker, DatePickerToolbar, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LoadingButton } from '@mui/lab';
-
+import hash from 'object-hash';
+import MaterialReactTable, { MRT_Cell, MRT_ColumnDef } from 'material-react-table';
 import './stockinform.page.css';
 import CustomDatePicker from 'Components/Common/customDatePicker';
-import { DataGrid } from '@mui/x-data-grid';
-
-const StockInItemSchema = yup.object().shape({
-  purchaseItemId: yup.number(),
-  product: yup.object().shape({
-    productCode: yup.string(),
-    productName: yup.string(),
-    productDescription: yup.string(),
-    category: yup.object().shape({
-      categoryId: yup.string(),
-      categoryName: yup.string()
-    }),
-    productPrice: yup.number()
-  }),
-  itemAmount: yup
-    .number()
-    .test(
-      'maxDigitsAfterDecimal',
-      'Price must have only 2 digits after decimal or less',
-      (number) => Number.isInteger(number * 10 ** 2)
-    ),
-  quantity: yup
-    .number()
-    .test(
-      'maxDigitsAfterDecimal',
-      'Price must have only 2 digits after decimal or less',
-      (number) => Number.isInteger(number * 10 ** 2)
-    ),
-  itemTotalAmount: yup
-    .number()
-    .test(
-      'maxDigitsAfterDecimal',
-      'Price must have only 2 digits after decimal or less',
-      (number) => Number.isInteger(number * 10 ** 2)
-    )
-});
-
-const StockInFormSchema = yup.object().shape({
-  purchaseId: yup.number(),
-  supplierInvoiceNo: yup.string().required('Required'),
-  batchCode: yup.string(),
-  supplier: yup.object().shape({
-    supplierId: yup
-      .number()
-      .typeError('Please select a supplier')
-      .required('Please select a supplier')
-  }),
-  purchaseDate: yup.date().typeError('Invalid Date').required('Required').default(new Date()),
-  staff: yup.object().shape({
-    userId: yup.number(),
-    userName: yup.string()
-  }),
-  purchaseItems: yup.array().of(StockInItemSchema).min(1).required('At least 1 item is required'),
-  totalAmount: yup.number().required(),
-  created: yup.date(),
-  remarks: yup.string()
-});
+import { DataGrid, useGridApiRef } from '@mui/x-data-grid';
+import AddIcon from '@mui/icons-material/AddBoxSharp';
+import { StockInFormSchema } from './schema/schemas';
+import { getAllProductsThunk } from 'store/product/thunk';
 
 export default function StockInForm() {
   /** MUI Daagrid column start */
-  const mockRows = [
-    {
-      id: 1,
-      product: {
-        productCode: 'Code 1',
-        productName: 'Product 1',
-        productDescription: 'Product Description 1'
-      },
-      itemAmount: 1200.0,
-      quantity: 1,
-      itemTotalAmount: 1200
-    }
-  ];
 
   const columns = [
     {
-      field: 'product.productCode',
-      headerName: 'Product Code',
-      width: 150,
-      editable: false,
-      headerClassName: 'hideRightSeparator'
+      accessorKey: 'product.productCode',
+      header: 'Product Code',
+      size: 70,
+      enableEditing: false
     },
     {
-      field: 'product.productName',
-      headerName: 'Product Name',
-      width: 150,
-      editable: false,
-      headerClassName: 'hideRightSeparator'
+      accessorKey: 'product.productName',
+      header: 'Product Name',
+      size: 100,
+      enableEditing: false
     },
     {
-      field: 'product.productDescription',
-      headerName: 'Product Description',
-      width: 150,
-      editable: false,
-      headerClassName: 'hideRightSeparator'
+      accessorKey: 'product.productDescription',
+      header: 'Product Description',
+      size: 150,
+      enableEditing: false
     },
     {
-      field: 'itemAmount',
-      headerName: 'Price',
-      width: 150,
-      editable: false,
-      headerClassName: 'hideRightSeparator'
+      accessorKey: 'itemAmount',
+      header: 'Amount',
+      size: 60,
+      enableEditing: true
     },
     {
-      field: 'quantity',
-      headerName: 'Quantity',
-      width: 150,
-      editable: false,
-      headerClassName: 'hideRightSeparator'
+      accessorKey: 'quantity',
+      header: 'Quantity',
+      size: 60,
+      enableEditing: true
     },
     {
-      field: 'itemTotalAmount',
-      headerName: 'Total Amount',
-      width: 150,
-      editable: false,
-      headerClassName: 'hideRightSeparator'
+      accessorKey: 'itemTotalAmount',
+      header: 'Total',
+      size: 60,
+      enableEditing: false
     }
   ];
 
@@ -141,28 +70,87 @@ export default function StockInForm() {
     handleSubmit,
     reset,
     control,
+    setValue,
     formState: { errors, isDirty }
   } = useForm({
     resolver: yupResolver(StockInFormSchema)
   });
+
   const onInvalid = (errors) => console.error(errors);
 
   const onSubmit = (data) => {
-    // console.log(data);
+    console.log(`Data is:: ${JSON.stringify(data)}`);
   };
   /**Form definition end */
 
   /** On Load start */
+
+  //temporary
+  const [mockRows, setMockRows] = useState([
+    {
+      product: {
+        productId: 1,
+        productCode: 'Code 1',
+        productName: 'Product 1',
+        productDescription:
+          'Product Description 1 Product Description 1 Product Description 1 Product Description 1 Product Description 1'
+      },
+      itemAmount: 1200.0,
+      quantity: 1,
+      itemTotalAmount: 1200
+    }
+  ]);
+
+  const [filteredProducts, setFilteredProducts] = useState([]);
+
   const dispatch = useDispatch();
   const onLoad = useRef(true);
   useEffect(() => {
     dispatch(getAllSuppliersThunk());
+    dispatch(getAllProductsThunk());
     onLoad.current = false;
+
+    //temp
+    setValue('purchaseItems', mockRows);
+    setMockRows(mockRows);
   }, [dispatch]);
 
   const { suppliers } = useSelector((state) => state.supplier);
+  const { products } = useSelector((state) => state.product);
 
   /** On Load end */
+
+  /** On cell edit start */
+
+  const handleSaveCell = (cell, value) => {
+    mockRows[cell.row.index][cell.column.id] = value;
+    mockRows[cell.row.index]['itemTotalAmount'] =
+      mockRows[cell.row.index]['quantity'] * mockRows[cell.row.index]['itemAmount'];
+
+    const newItems = [...mockRows];
+
+    setMockRows(newItems);
+  };
+
+  /** On cell edit end */
+
+  /** Action start */
+  function onAddClick() {}
+  /** Action end */
+
+  /** Others start */
+
+  function onSupplierChange(supplier) {
+    // console.log(supplier);
+    const filteredProducts = products.filter(
+      (product) => product.supplier.supplierId === supplier.supplierId
+    );
+
+    setFilteredProducts(filteredProducts);
+    //temp
+    setMockRows([]); //reset
+  }
+  /** Others end */
   return (
     <div>
       <form onSubmit={handleSubmit(onSubmit, onInvalid)}>
@@ -171,6 +159,7 @@ export default function StockInForm() {
             options={suppliers}
             sx={{ width: 250 }}
             control={control}
+            onChange={onSupplierChange}
             name="supplier.supplierId"
             placeholder="Select Supplier"
             optionId="supplierId"
@@ -200,22 +189,36 @@ export default function StockInForm() {
             helperText={errors.remarks && errors.remarks.message}
           />
         </div>
-        <Box sx={{ height: 550, width: 800, color: '#153d02' }}>
-          <DataGrid
-            rows={mockRows}
-            columns={columns}
-            rowHeight={40}
-            rowsPerPageOptions={[10, 20, 30]}
-            disableSelectionOnClick
-            sx={{
-              borderColor: '#153d02',
-              '& .hideRightSeparator > .MuiDataGrid-columnSeparator': {
-                display: 'none'
-              }
-            }}
-            // onRowClick={(item) => props.onRowClick(item.row)}
-          />
-        </Box>
+
+        <MaterialReactTable
+          columns={columns}
+          data={mockRows}
+          editingMode="cell"
+          enableEditing
+          enablePagination={false}
+          enableColumnActions={false}
+          enableTopToolbar={false}
+          enableColumnOrdering={false}
+          muiTableProps={{
+            sx: {
+              tableLayout: 'fixed',
+              wordWrap: 'break-word'
+            }
+          }}
+          muiTableBodyCellEditTextFieldProps={({ cell }) => ({
+            //onBlur is more efficient, but could use onChange instead
+            onBlur: (event) => {
+              handleSaveCell(cell, event.target.value);
+            }
+          })}
+          renderBottomToolbarCustomActions={() => (
+            <div>
+              <IconButton onClick={onAddClick} variant="contained">
+                <AddIcon fontSize="large" color="primary"></AddIcon>
+              </IconButton>
+            </div>
+          )}
+        />
         <LoadingButton
           className="modal-button"
           variant="contained"

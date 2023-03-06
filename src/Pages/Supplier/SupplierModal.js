@@ -2,7 +2,7 @@
 import { LoadingButton } from '@mui/lab';
 import { TextField } from '@mui/material';
 
-import Modal from 'Components/Modal/Modal';
+import CustomModal from 'Components/Modal/CustomModal';
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { addSupplierThunk, updateSupplierThunk } from 'store/supplier/thunk';
@@ -72,7 +72,7 @@ export default function SupplierModal({ supplier, show, isAdd, initSchema, onClo
   };
 
   return (
-    <Modal
+    <CustomModal
       title={isAdd ? 'Add Supplier' : 'Edit Supplier'}
       show={show}
       onClose={handleClose}
@@ -149,6 +149,6 @@ export default function SupplierModal({ supplier, show, isAdd, initSchema, onClo
           </LoadingButton>
         </div>
       </form>
-    </Modal>
+    </CustomModal>
   );
 }

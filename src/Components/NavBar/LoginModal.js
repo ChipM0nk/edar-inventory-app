@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { Button, Grid, TextField } from '@mui/material';
 
-import Modal from 'Components/Modal/Modal';
+import CustomModal from 'Components/Modal/CustomModal';
 
 import { useDispatch, useSelector } from 'react-redux';
 import React, { useEffect } from 'react';
@@ -62,7 +62,7 @@ export default function LoginModal(props) {
   });
 
   return (
-    <Modal
+    <CustomModal
       title="LOGIN"
       show={props.show}
       onClose={handleClose}
@@ -113,6 +113,6 @@ export default function LoginModal(props) {
         isAlert
         onClose={handleAlertClose}
       />
-    </Modal>
+    </CustomModal>
   );
 }

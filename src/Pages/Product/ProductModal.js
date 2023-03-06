@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { LoadingButton } from '@mui/lab';
 import { TextField } from '@mui/material';
-import Modal from 'Components/Modal/Modal';
+import CustomModal from 'Components/Modal/CustomModal';
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { addProductThunk, updateProductThunk } from 'store/product/thunk';
@@ -91,7 +91,7 @@ export default function ProductModal({
   const onInvalid = (errors) => console.error(errors);
 
   return (
-    <Modal
+    <CustomModal
       title={isAdd ? 'Add Product' : 'Edit Product'}
       show={show}
       onClose={handleClose}
@@ -209,6 +209,6 @@ export default function ProductModal({
           </LoadingButton>
         </div>
       </form>
-    </Modal>
+    </CustomModal>
   );
 }

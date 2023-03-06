@@ -32,6 +32,7 @@ export const CustomAutoComplete = (props) => {
               }}
               onChange={(event, newValue) => {
                 onChange(newValue ? newValue[props.optionId] : null);
+                props.onChange(newValue);
               }}
               id="controllable-states-demo"
               options={options}

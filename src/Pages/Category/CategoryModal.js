@@ -2,7 +2,7 @@
 import { LoadingButton } from '@mui/lab';
 import { TextField } from '@mui/material';
 
-import Modal from 'Components/Modal/Modal';
+import CustomModal from 'Components/Modal/CustomModal';
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { addCategoryThunk, updateCategoryThunk } from 'store/category/thunk';
@@ -63,7 +63,7 @@ export default function CategoryModal({ category, show, isAdd, initSchema, onClo
   };
 
   return (
-    <Modal
+    <CustomModal
       title={isAdd ? 'Add Category' : 'Edit Category'}
       show={show}
       onClose={handleClose}
@@ -116,6 +116,6 @@ export default function CategoryModal({ category, show, isAdd, initSchema, onClo
           </LoadingButton>
         </div>
       </form>
-    </Modal>
+    </CustomModal>
   );
 }
