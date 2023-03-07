@@ -28,7 +28,9 @@ export const CustomAutoComplete = (props) => {
               }
               sx={{ width: props.width ?? 250 }}
               getOptionLabel={(option) => {
-                return option[props.optionLabel];
+                return props.optionCode
+                  ? `${option[props.optionCode]} - ${option[props.optionLabel]}`
+                  : option[props.optionLabel];
               }}
               onChange={(event, newValue) => {
                 onChange(newValue ? newValue[props.optionId] : null);

@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 // @ts-nocheck
-import { Box, IconButton, TextField, Typography } from '@mui/material';
+import { Box, Button, IconButton, TextField, Typography } from '@mui/material';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -19,6 +19,7 @@ import { DataGrid, useGridApiRef } from '@mui/x-data-grid';
 import AddIcon from '@mui/icons-material/AddBoxSharp';
 import { StockInFormSchema } from './schema/schemas';
 import { getAllProductsThunk } from 'store/product/thunk';
+import AddStockinItemModal from './AddStockInItemModal';
 
 export default function StockInForm() {
   /** MUI Daagrid column start */
@@ -33,14 +34,26 @@ export default function StockInForm() {
     {
       accessorKey: 'product.productName',
       header: 'Product Name',
-      size: 100,
+      size: 70,
       enableEditing: false
     },
     {
       accessorKey: 'product.productDescription',
       header: 'Product Description',
-      size: 150,
-      enableEditing: false
+      size: 180,
+      enableEditing: false,
+      Cell: ({ renderedCellValue }) => (
+        <div
+          style={{
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+            maxWidth: '100%',
+            zIndex: 0
+          }}>
+          {renderedCellValue}
+        </div>
+      )
     },
     {
       accessorKey: 'itemAmount',
@@ -102,9 +115,10 @@ export default function StockInForm() {
   ]);
 
   const [filteredProducts, setFilteredProducts] = useState([]);
-
+  const [show, setShow] = useState(false);
   const dispatch = useDispatch();
   const onLoad = useRef(true);
+
   useEffect(() => {
     dispatch(getAllSuppliersThunk());
     dispatch(getAllProductsThunk());
@@ -135,16 +149,18 @@ export default function StockInForm() {
   /** On cell edit end */
 
   /** Action start */
-  function onAddClick() {}
+  function onAddClick() {
+    setShow(true);
+  }
   /** Action end */
 
   /** Others start */
 
   function onSupplierChange(supplier) {
     // console.log(supplier);
-    const filteredProducts = products.filter(
-      (product) => product.supplier.supplierId === supplier.supplierId
-    );
+    const filteredProducts = supplier
+      ? products.filter((product) => product.supplier.supplierId === supplier.supplierId)
+      : [];
 
     setFilteredProducts(filteredProducts);
     //temp
@@ -198,6 +214,7 @@ export default function StockInForm() {
           enablePagination={false}
           enableColumnActions={false}
           enableTopToolbar={false}
+          // enableBottomToolbar={false}
           enableColumnOrdering={false}
           muiTableProps={{
             sx: {
@@ -211,14 +228,31 @@ export default function StockInForm() {
               handleSaveCell(cell, event.target.value);
             }
           })}
-          renderBottomToolbarCustomActions={() => (
-            <div>
-              <IconButton onClick={onAddClick} variant="contained">
+          renderBottomToolbarCustomActions={() => {
+            console.log(filteredProducts.length === 0 ? true : false);
+            return (
+              <div>
+                <Button
+                  disabled={filteredProducts.length === 0 ? true : false}
+                  sx={{ width: 120 }}
+                  onClick={onAddClick}
+                  variant="contained">
+                  Add Item
+                </Button>
+                {/* <IconButton disabled={filteredProducts} onClick={onAddClick} variant="contained">
                 <AddIcon fontSize="large" color="primary"></AddIcon>
-              </IconButton>
-            </div>
-          )}
+              </IconButton> */}
+              </div>
+            );
+          }}
         />
+        {/* <Button
+          disabled={filteredProducts.length === 0 ? true : false}
+          sx={{ width: 120 }}
+          onClick={onAddClick}
+          variant="contained">
+          Add Item
+        </Button> */}
         <LoadingButton
           className="modal-button"
           variant="contained"
@@ -228,6 +262,7 @@ export default function StockInForm() {
           SUBMIT
         </LoadingButton>
       </form>
+      <AddStockinItemModal show={show} filteredProducts={filteredProducts} />
     </div>
   );
 }
