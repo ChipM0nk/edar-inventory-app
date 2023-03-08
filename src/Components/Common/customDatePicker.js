@@ -23,7 +23,7 @@ export const CustomDatePicker = (props) => {
               onChange(event);
             }}
             sx={{ width: 200 }}
-            disableMaskedInput={false}
+            disableMaskedInput
             renderInput={(params) => (
               <TextField
                 {...params}

@@ -99,20 +99,7 @@ export default function StockInForm() {
   /** On Load start */
 
   //temporary
-  const [mockRows, setMockRows] = useState([
-    {
-      product: {
-        productId: 1,
-        productCode: 'Code 1',
-        productName: 'Product 1',
-        productDescription:
-          'Product Description 1 Product Description 1 Product Description 1 Product Description 1 Product Description 1'
-      },
-      itemAmount: 1200.0,
-      quantity: 1,
-      itemTotalAmount: 1200
-    }
-  ]);
+  const [stockinItems, setStockinItems] = useState([]);
 
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [show, setShow] = useState(false);
@@ -125,8 +112,8 @@ export default function StockInForm() {
     onLoad.current = false;
 
     //temp
-    setValue('purchaseItems', mockRows);
-    setMockRows(mockRows);
+    setValue('purchaseItems', stockinItems);
+    setStockinItems(stockinItems);
   }, [dispatch]);
 
   const { suppliers } = useSelector((state) => state.supplier);
@@ -137,13 +124,13 @@ export default function StockInForm() {
   /** On cell edit start */
 
   const handleSaveCell = (cell, value) => {
-    mockRows[cell.row.index][cell.column.id] = value;
-    mockRows[cell.row.index]['itemTotalAmount'] =
-      mockRows[cell.row.index]['quantity'] * mockRows[cell.row.index]['itemAmount'];
+    stockinItems[cell.row.index][cell.column.id] = value;
+    stockinItems[cell.row.index]['itemTotalAmount'] =
+      stockinItems[cell.row.index]['quantity'] * stockinItems[cell.row.index]['itemAmount'];
 
-    const newItems = [...mockRows];
+    const newItems = [...stockinItems];
 
-    setMockRows(newItems);
+    setStockinItems(newItems);
   };
 
   /** On cell edit end */
@@ -164,9 +151,19 @@ export default function StockInForm() {
 
     setFilteredProducts(filteredProducts);
     //temp
-    setMockRows([]); //reset
+    setStockinItems([]); //reset
   }
+
   /** Others end */
+
+  /** Modal actions start */
+
+  function onAddItem(itemToAdd) {
+    const newStockinItem = [...stockinItems, itemToAdd];
+    setStockinItems(newStockinItem);
+  }
+
+  /** Modal actions end */
   return (
     <div>
       <form onSubmit={handleSubmit(onSubmit, onInvalid)}>
@@ -208,7 +205,7 @@ export default function StockInForm() {
 
         <MaterialReactTable
           columns={columns}
-          data={mockRows}
+          data={stockinItems}
           editingMode="cell"
           enableEditing
           enablePagination={false}
@@ -228,31 +225,19 @@ export default function StockInForm() {
               handleSaveCell(cell, event.target.value);
             }
           })}
-          renderBottomToolbarCustomActions={() => {
-            console.log(filteredProducts.length === 0 ? true : false);
-            return (
-              <div>
-                <Button
-                  disabled={filteredProducts.length === 0 ? true : false}
-                  sx={{ width: 120 }}
-                  onClick={onAddClick}
-                  variant="contained">
-                  Add Item
-                </Button>
-                {/* <IconButton disabled={filteredProducts} onClick={onAddClick} variant="contained">
-                <AddIcon fontSize="large" color="primary"></AddIcon>
-              </IconButton> */}
-              </div>
-            );
-          }}
+          renderBottomToolbarCustomActions={() => (
+            <div>
+              <Button
+                disabled={filteredProducts.length === 0 ? true : false}
+                sx={{ width: 120 }}
+                onClick={onAddClick}
+                variant="contained">
+                Add Item
+              </Button>
+            </div>
+          )}
         />
-        {/* <Button
-          disabled={filteredProducts.length === 0 ? true : false}
-          sx={{ width: 120 }}
-          onClick={onAddClick}
-          variant="contained">
-          Add Item
-        </Button> */}
+
         <LoadingButton
           className="modal-button"
           variant="contained"
@@ -262,7 +247,12 @@ export default function StockInForm() {
           SUBMIT
         </LoadingButton>
       </form>
-      <AddStockinItemModal show={show} filteredProducts={filteredProducts} />
+      <AddStockinItemModal
+        show={show}
+        onAddItem={onAddItem}
+        filteredProducts={filteredProducts}
+        onClose={() => setShow(false)}
+      />
     </div>
   );
 }

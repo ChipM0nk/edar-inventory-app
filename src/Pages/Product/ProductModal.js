@@ -60,16 +60,15 @@ export default function ProductModal({
     onClose();
     reset(initSchema);
   }
+  useEffect(() => {
+    if (!show) handleClose();
+  }, [show]);
 
   /**react-hook-form start */
 
   useEffect(() => {
     reset(product);
   }, [product]);
-
-  useEffect(() => {
-    if (!show) handleClose();
-  }, [show]);
 
   const {
     register,

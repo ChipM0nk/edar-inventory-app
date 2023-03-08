@@ -3,7 +3,10 @@ import * as yup from 'yup';
 export const StockInItemSchema = yup.object().shape({
   purchaseItemId: yup.number(),
   product: yup.object().shape({
-    productId: yup.number().required('Please select a product'),
+    productId: yup
+      .number()
+      .typeError('Please select a product')
+      .required('Please select a product'),
     productCode: yup.string(),
     productName: yup.string(),
     productDescription: yup.string(),
@@ -22,6 +25,7 @@ export const StockInItemSchema = yup.object().shape({
     ),
   quantity: yup
     .number()
+    .min(1, 'Invalid quantity')
     .test(
       'maxDigitsAfterDecimal',
       'Price must have only 2 digits after decimal or less',

@@ -2,12 +2,7 @@
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
     grid-template-rows: 1fr 1fr;
-    /* padding: auto; */
     grid-row-gap: 30px; 
-    /* column-gap:50px;  */
-    /* grid-gap: auto; */
-    /* justify-content: space-between !important; */
-    /* align-content: space-between; */
     width:850px !important;
 }
 
@@ -16,45 +11,23 @@
     grid-column: 1 / 5;
     width: 818px !important
 }
-
-/** Tooltip **/
-
-/* Tooltip container */
-.tooltip {
-    position: relative;
-    display: inline-block;
-    border-bottom: 1px dotted black; /* If you want dots under the hoverable text */
-  }
-  
-  /* Tooltip text */
-  .tooltip .tooltiptext {
-    visibility: hidden;
-    width: 120px;
-    background-color: black;
-    color: #fff;
-    text-align: center;
-    padding: 5px 0;
-    border-radius: 6px;
-   
-    /* Position the tooltip text - see examples below! */
-    position: absolute;
-    z-index: 1;
-  }
-  
-  /* Show the tooltip text when you mouse over the tooltip container */
-  .tooltip:hover .tooltiptext {
-    visibility: visible;
-  }
-  
-  .add-item-grid{
+  .add-item-grid-form{
     display: grid;
-    margin-top: 30px;
-    margin-left: 20px;
-    grid-template-rows: 1fr 1.7fr 1fr 1fr 1fr;
+    margin: 30px 20px !important;
+    grid-template-rows: 1fr 1fr 1fr 1fr 1fr;
     grid-template-columns: 1fr;
-    padding: auto;
-    row-gap: 30px;
     justify-content: center;
   }
 
-  
+
+  .modal-button{
+    margin-right: 10px;
+}
+
+
+.add-item-grid-form>div{
+  height: 80px !important;
+}
+.button-div{
+  float: right !important;
+}

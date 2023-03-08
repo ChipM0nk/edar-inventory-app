@@ -22,7 +22,11 @@ code {
   padding: '0px !important';
 }
 
-input[type='text'].MuiOutlinedInput-input {
+input[type='text'].MuiOutlinedInput-input  {
+  padding: 8.5px 14px !important;
+}
+
+input[type='number'] {
   padding: 8.5px 14px !important;
 }
 
