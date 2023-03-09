@@ -26,7 +26,6 @@ export default function AddStockinItemModal({ show, onClose, filteredProducts, o
     resolver: yupResolver(StockInItemSchema)
   });
   useState(() => {
-    console.log('Reset');
     reset({});
   });
 
@@ -92,11 +91,11 @@ export default function AddStockinItemModal({ show, onClose, filteredProducts, o
             step="0.01"
             {...register('itemAmount', {
               onChange: (e) => {
-                const total = e.target.value * getValues('quantity');
+                const total = Math.round(e.target.value * getValues('quantity') * 100) / 100;
                 setValue('itemTotalAmount', total);
               }
             })}
-            inputProps={{ step: 0.01 }}
+            inputProps={{ step: 'any' }}
             InputLabelProps={{ shrink: true }}
             sx={{ width: 300 }}
             error={errors.itemAmount ? true : false}
@@ -107,10 +106,10 @@ export default function AddStockinItemModal({ show, onClose, filteredProducts, o
             variant="outlined"
             defaultValue={0}
             type="number"
-            inputProps={{ step: 0.01 }}
+            inputProps={{ step: 'any' }}
             {...register('quantity', {
               onChange: (e) => {
-                const total = e.target.value * getValues('itemAmount');
+                const total = Math.round(e.target.value * getValues('itemAmount') * 100) / 100;
                 setValue('itemTotalAmount', total);
               }
             })}

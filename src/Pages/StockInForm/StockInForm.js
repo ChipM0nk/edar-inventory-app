@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 // @ts-nocheck
-import { Box, Button, IconButton, TextField, Typography } from '@mui/material';
+import { Box, Button, IconButton, TextField, Tooltip, Typography } from '@mui/material';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -20,11 +20,29 @@ import AddIcon from '@mui/icons-material/AddBoxSharp';
 import { StockInFormSchema } from './schema/schemas';
 import { getAllProductsThunk } from 'store/product/thunk';
 import AddStockinItemModal from './AddStockInItemModal';
-
+import { Delete, Edit } from '@mui/icons-material';
+import _ from 'lodash';
 export default function StockInForm() {
   /** MUI Daagrid column start */
 
+  function uniqueID() {
+    return Math.floor(Math.random() * Date.now());
+  }
+  const [validationErrors, setValidationErrors] = useState({});
   const columns = [
+    {
+      accessorKey: 'randomId',
+      header: 'Action',
+      size: 10,
+      enableEditing: false,
+      Cell: ({ renderedCellValue }) => (
+        <Tooltip sx={{ width: 20 }} arrow placement="right" title="Delete">
+          <IconButton color="error" onClick={() => handleDeleteRow(renderedCellValue)}>
+            <Delete />
+          </IconButton>
+        </Tooltip>
+      )
+    },
     {
       accessorKey: 'product.productCode',
       header: 'Product Code',
@@ -59,13 +77,55 @@ export default function StockInForm() {
       accessorKey: 'itemAmount',
       header: 'Amount',
       size: 60,
-      enableEditing: true
+      enableEditing: true,
+      muiTableBodyCellEditTextFieldProps: {
+        error: !!validationErrors.age, //highlight mui text field red error color
+        helperText: validationErrors.age, //show error message in helper text.
+        required: true,
+        type: 'number',
+        onChange: (event) => {
+          const value = event.target.value;
+          //validation logic
+          if (!value) {
+            setValidationErrors((prev) => ({ ...prev, age: 'Amount is required' }));
+          } else if (value < 0) {
+            setValidationErrors({
+              ...validationErrors,
+              age: 'Invalid Amount'
+            });
+          } else {
+            delete validationErrors.age;
+            setValidationErrors({ ...validationErrors });
+          }
+        }
+      }
     },
     {
       accessorKey: 'quantity',
       header: 'Quantity',
       size: 60,
-      enableEditing: true
+      enableEditing: true,
+      muiTableBodyCellEditTextFieldProps: {
+        error: !!validationErrors.age, //highlight mui text field red error color
+        helperText: validationErrors.age, //show error message in helper text.
+        required: true,
+        type: 'number',
+        onChange: (event) => {
+          const value = event.target.value;
+          //validation logic
+          if (!value) {
+            setValidationErrors((prev) => ({ ...prev, age: 'Quantity is required' }));
+          } else if (value < 0) {
+            setValidationErrors({
+              ...validationErrors,
+              age: 'Invalid Quantity'
+            });
+          } else {
+            delete validationErrors.age;
+            setValidationErrors({ ...validationErrors });
+          }
+        }
+      }
     },
     {
       accessorKey: 'itemTotalAmount',
@@ -89,7 +149,9 @@ export default function StockInForm() {
     resolver: yupResolver(StockInFormSchema)
   });
 
-  const onInvalid = (errors) => console.error(errors);
+  const onInvalid = (errors) => {
+    console.error(errors);
+  };
 
   const onSubmit = (data) => {
     console.log(`Data is:: ${JSON.stringify(data)}`);
@@ -131,6 +193,7 @@ export default function StockInForm() {
     const newItems = [...stockinItems];
 
     setStockinItems(newItems);
+    setValue('purchaseItems', newItems);
   };
 
   /** On cell edit end */
@@ -154,13 +217,20 @@ export default function StockInForm() {
     setStockinItems([]); //reset
   }
 
+  function handleDeleteRow(randomId) {
+    const newStockinItems = stockinItems.filter((i) => i.randomId != randomId);
+    setStockinItems(newStockinItems);
+    setValue('purchaseItems', newStockinItems);
+  }
+
   /** Others end */
 
   /** Modal actions start */
 
   function onAddItem(itemToAdd) {
-    const newStockinItem = [...stockinItems, itemToAdd];
-    setStockinItems(newStockinItem);
+    const newStockinItems = [...stockinItems, { ...itemToAdd, randomId: uniqueID() }];
+    setStockinItems(newStockinItems);
+    setValue('purchaseItems', newStockinItems);
   }
 
   /** Modal actions end */
@@ -204,24 +274,48 @@ export default function StockInForm() {
         </div>
 
         <MaterialReactTable
+          displayColumnDefOptions={{
+            'mrt-row-actions': {
+              muiTableHeadCellProps: {
+                align: 'center'
+              },
+              size: 120
+            }
+          }}
+          enableEditing={true}
           columns={columns}
           data={stockinItems}
           editingMode="cell"
-          enableEditing
           enablePagination={false}
           enableColumnActions={false}
           enableTopToolbar={false}
-          // enableBottomToolbar={false}
           enableColumnOrdering={false}
+          onEditingRowSave={() => {}}
+          onEditingRowCancel={() => {}}
           muiTableProps={{
             sx: {
               tableLayout: 'fixed',
               wordWrap: 'break-word'
             }
           }}
+          renderRowActions={({ row, table }) => (
+            <Box sx={{ display: 'flex', gap: '1rem' }}>
+              <Tooltip arrow placement="right" title="Delete">
+                <IconButton color="error" onClick={() => handleDeleteRow(row)}>
+                  <Delete />
+                </IconButton>
+              </Tooltip>
+            </Box>
+          )}
           muiTableBodyCellEditTextFieldProps={({ cell }) => ({
             //onBlur is more efficient, but could use onChange instead
             onBlur: (event) => {
+              console.log(Number.parseFloat(event.target.value * 10 ** 2).toFixed(2));
+              console.log(event.target.value * 10 ** 2);
+              if (!Number.isInteger(event.target.value * 10 ** 2) || event.target.value < 1) {
+                alert('Invalid value!');
+                return;
+              }
               handleSaveCell(cell, event.target.value);
             }
           })}

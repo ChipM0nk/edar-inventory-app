@@ -1,6 +1,7 @@
 import * as yup from 'yup';
 
 export const StockInItemSchema = yup.object().shape({
+  randomId: yup.string(), //use for deletion. not saved in DB
   purchaseItemId: yup.number(),
   product: yup.object().shape({
     productId: yup
@@ -18,6 +19,7 @@ export const StockInItemSchema = yup.object().shape({
   }),
   itemAmount: yup
     .number()
+    .typeError('Invalid item amount.')
     .test(
       'maxDigitsAfterDecimal',
       'Price must have only 2 digits after decimal or less',
@@ -25,6 +27,7 @@ export const StockInItemSchema = yup.object().shape({
     ),
   quantity: yup
     .number()
+    .typeError('Invalid quantity.')
     .min(1, 'Invalid quantity')
     .test(
       'maxDigitsAfterDecimal',
@@ -33,6 +36,7 @@ export const StockInItemSchema = yup.object().shape({
     ),
   itemTotalAmount: yup
     .number()
+    .typeError('Invalid item total amount.')
     .test(
       'maxDigitsAfterDecimal',
       'Price must have only 2 digits after decimal or less',
