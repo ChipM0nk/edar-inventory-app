@@ -1,27 +1,20 @@
-/* eslint-disable no-unused-vars */
 // @ts-nocheck
-import { Box, Button, IconButton, TextField, Tooltip, Typography } from '@mui/material';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { Controller, useForm } from 'react-hook-form';
+import { Button, IconButton, TextField, Tooltip } from '@mui/material';
+import React, { useEffect, useRef, useState } from 'react';
+import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import * as yup from 'yup';
 import { useDispatch, useSelector } from 'react-redux';
 import { getAllSuppliersThunk } from 'store/supplier/thunk';
-import { CustomAutoComplete } from 'Components/Common/customAutoComplete';
-import { DatePicker, DatePickerToolbar, LocalizationProvider } from '@mui/x-date-pickers';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LoadingButton } from '@mui/lab';
-import hash from 'object-hash';
-import MaterialReactTable, { MRT_Cell, MRT_ColumnDef } from 'material-react-table';
+import MaterialReactTable from 'material-react-table';
 import './stockinform.page.css';
 import CustomDatePicker from 'Components/Common/customDatePicker';
-import { DataGrid, useGridApiRef } from '@mui/x-data-grid';
-import AddIcon from '@mui/icons-material/AddBoxSharp';
 import { StockInFormSchema } from './schema/schemas';
 import { getAllProductsThunk } from 'store/product/thunk';
 import AddStockinItemModal from './AddStockInItemModal';
-import { Delete, Edit } from '@mui/icons-material';
-import _ from 'lodash';
+import { Delete } from '@mui/icons-material';
+import { CustomAutoComplete } from 'Components/Common/customAutoComplete';
+import StockInFormReviewModal from './stockinFormReviewModal';
 export default function StockInForm() {
   /** MUI Daagrid column start */
 
@@ -36,7 +29,7 @@ export default function StockInForm() {
       size: 10,
       enableEditing: false,
       Cell: ({ renderedCellValue }) => (
-        <Tooltip sx={{ width: 20 }} arrow placement="right" title="Delete">
+        <Tooltip sx={{ width: 20, padding: 0 }} arrow placement="right" title="Delete">
           <IconButton color="error" onClick={() => handleDeleteRow(renderedCellValue)}>
             <Delete />
           </IconButton>
@@ -137,11 +130,24 @@ export default function StockInForm() {
 
   /** MUI Daagrid column end */
 
+  /** Const start */
+  const [stockinItems, setStockinItems] = useState([]);
+
+  const [filteredProducts, setFilteredProducts] = useState([]);
+  const [show, setShow] = useState(false);
+  const [showReviewModal, setShowReviewModal] = useState(false);
+  const [stockinFormData, setStockinFormData] = useState({});
+
+  const { suppliers } = useSelector((state) => state.supplier);
+  const { products } = useSelector((state) => state.product);
+
+  /** Const end */
+
   /**Form definition start */
+
   const {
     register,
     handleSubmit,
-    reset,
     control,
     setValue,
     formState: { errors, isDirty }
@@ -155,16 +161,13 @@ export default function StockInForm() {
 
   const onSubmit = (data) => {
     console.log(`Data is:: ${JSON.stringify(data)}`);
+    setShowReviewModal(true);
+    setStockinFormData(data);
   };
   /**Form definition end */
 
   /** On Load start */
 
-  //temporary
-  const [stockinItems, setStockinItems] = useState([]);
-
-  const [filteredProducts, setFilteredProducts] = useState([]);
-  const [show, setShow] = useState(false);
   const dispatch = useDispatch();
   const onLoad = useRef(true);
 
@@ -177,9 +180,6 @@ export default function StockInForm() {
     setValue('purchaseItems', stockinItems);
     setStockinItems(stockinItems);
   }, [dispatch]);
-
-  const { suppliers } = useSelector((state) => state.supplier);
-  const { products } = useSelector((state) => state.product);
 
   /** On Load end */
 
@@ -198,23 +198,27 @@ export default function StockInForm() {
 
   /** On cell edit end */
 
-  /** Action start */
-  function onAddClick() {
-    setShow(true);
+  /** Add Item Modal actions start */
+
+  function onAddItem(itemToAdd) {
+    const newStockinItems = [...stockinItems, { ...itemToAdd, randomId: uniqueID() }];
+    setStockinItems(newStockinItems);
+    setValue('purchaseItems', newStockinItems);
   }
-  /** Action end */
+
+  /**  Add Item  actions end */
 
   /** Others start */
 
   function onSupplierChange(supplier) {
-    // console.log(supplier);
+    console.log(supplier);
     const filteredProducts = supplier
       ? products.filter((product) => product.supplier.supplierId === supplier.supplierId)
       : [];
 
     setFilteredProducts(filteredProducts);
-    //temp
     setStockinItems([]); //reset
+    setValue('supplier.supplierName', supplier.supplierName);
   }
 
   function handleDeleteRow(randomId) {
@@ -223,17 +227,11 @@ export default function StockInForm() {
     setValue('purchaseItems', newStockinItems);
   }
 
+  function onAddClick() {
+    setShow(true);
+  }
   /** Others end */
 
-  /** Modal actions start */
-
-  function onAddItem(itemToAdd) {
-    const newStockinItems = [...stockinItems, { ...itemToAdd, randomId: uniqueID() }];
-    setStockinItems(newStockinItems);
-    setValue('purchaseItems', newStockinItems);
-  }
-
-  /** Modal actions end */
   return (
     <div>
       <form onSubmit={handleSubmit(onSubmit, onInvalid)}>
@@ -267,22 +265,16 @@ export default function StockInForm() {
             label="Remarks"
             size="small"
             {...register('remarks')}
-            sx={{ width: 300 }}
+            sx={{ width: 765 }}
             inputProps={{ maxLength: 50 }}
             helperText={errors.remarks && errors.remarks.message}
           />
         </div>
 
         <MaterialReactTable
-          displayColumnDefOptions={{
-            'mrt-row-actions': {
-              muiTableHeadCellProps: {
-                align: 'center'
-              },
-              size: 120
-            }
-          }}
-          enableEditing={true}
+          enableEditing
+          enableStickyHeader
+          muiTableContainerProps={{ sx: { maxHeight: '400px' } }}
           columns={columns}
           data={stockinItems}
           editingMode="cell"
@@ -292,21 +284,13 @@ export default function StockInForm() {
           enableColumnOrdering={false}
           onEditingRowSave={() => {}}
           onEditingRowCancel={() => {}}
+          initialState={{ density: 'compact' }}
           muiTableProps={{
             sx: {
               tableLayout: 'fixed',
               wordWrap: 'break-word'
             }
           }}
-          renderRowActions={({ row, table }) => (
-            <Box sx={{ display: 'flex', gap: '1rem' }}>
-              <Tooltip arrow placement="right" title="Delete">
-                <IconButton color="error" onClick={() => handleDeleteRow(row)}>
-                  <Delete />
-                </IconButton>
-              </Tooltip>
-            </Box>
-          )}
           muiTableBodyCellEditTextFieldProps={({ cell }) => ({
             //onBlur is more efficient, but could use onChange instead
             onBlur: (event) => {
@@ -337,8 +321,8 @@ export default function StockInForm() {
           variant="contained"
           type="submit"
           loading={false}
-          disabled={!isDirty}>
-          SUBMIT
+          disabled={!isDirty || (stockinItems.length === 0 ? true : false)}>
+          REVIEW
         </LoadingButton>
       </form>
       <AddStockinItemModal
@@ -346,6 +330,12 @@ export default function StockInForm() {
         onAddItem={onAddItem}
         filteredProducts={filteredProducts}
         onClose={() => setShow(false)}
+      />
+      <StockInFormReviewModal
+        stockInFormData={stockinFormData}
+        show={showReviewModal}
+        columns={columns}
+        onClose={() => setShowReviewModal(false)}
       />
     </div>
   );

@@ -52,7 +52,8 @@ export const StockInFormSchema = yup.object().shape({
     supplierId: yup
       .number()
       .typeError('Please select a supplier')
-      .required('Please select a supplier')
+      .required('Please select a supplier'),
+    supplierName: yup.string()
   }),
   purchaseDate: yup.date().typeError('Invalid Date').required('Required').default(new Date()),
   staff: yup.object().shape({

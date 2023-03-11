@@ -40,6 +40,7 @@ export const CustomAutoComplete = (props) => {
               options={options}
               renderInput={(params) => (
                 <TextField
+                  autoFocus={props.autoFocus}
                   {...params}
                   error={error?.message ? true : false}
                   label={props.placeholder}
