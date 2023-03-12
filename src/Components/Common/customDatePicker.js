@@ -22,12 +22,12 @@ export const CustomDatePicker = (props) => {
             onChange={(event) => {
               onChange(event);
             }}
-            sx={{ width: 200 }}
+            sx={{ width: 250 }}
             disableMaskedInput
             renderInput={(params) => (
               <TextField
                 {...params}
-                sx={{ width: 200 }}
+                sx={{ width: 250 }}
                 ref={ref}
                 error={error?.message ? true : false}
                 helperText={error?.message}

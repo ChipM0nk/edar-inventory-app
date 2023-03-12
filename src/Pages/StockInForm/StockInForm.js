@@ -14,7 +14,7 @@ import { getAllProductsThunk } from 'store/product/thunk';
 import AddStockinItemModal from './AddStockInItemModal';
 import { Delete } from '@mui/icons-material';
 import { CustomAutoComplete } from 'Components/Common/customAutoComplete';
-import StockInFormReviewModal from './stockinFormReviewModal';
+import StockInFormReviewModal from './StockinFormReviewModal';
 export default function StockInForm() {
   /** MUI Daagrid column start */
 
@@ -265,7 +265,8 @@ export default function StockInForm() {
             label="Remarks"
             size="small"
             {...register('remarks')}
-            sx={{ width: 765 }}
+            // sx={{ width: 766 }}
+            fullWidth
             inputProps={{ maxLength: 50 }}
             helperText={errors.remarks && errors.remarks.message}
           />

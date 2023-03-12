@@ -1,14 +1,49 @@
+/* eslint-disable no-unused-vars */
+// @ts-nocheck
 import CustomModal from 'Components/Modal/CustomModal';
-import React from 'react';
+import React, { useEffect } from 'react';
 import MaterialReactTable from 'material-react-table';
 import { LoadingButton } from '@mui/lab';
+import moment from 'moment';
+import { useDispatch, useSelector } from 'react-redux';
+import { NotificationManager } from 'react-notifications';
+import { addStockinThunk } from 'store/stockin/thunk';
 
 export default function StockInFormReviewModal({ stockInFormData, columns, show, onClose }) {
-  console.log(stockInFormData.supplier);
+  console.log(stockInFormData);
+  const { stockin, isProcessing, isSaved, crudError } = useSelector((state) => state.stockin);
+  const dispatch = useDispatch();
+  useEffect(() => {
+    if (isSaved) {
+      onClose();
+      NotificationManager.info('Stockin is saved', 'Stock In', 3000);
+    } else if (crudError) {
+      NotificationManager.error(crudError, 'Product', 3000);
+    }
+  }, [isSaved, crudError]);
   return (
     <CustomModal title="Review Details" show={show} onClose={onClose} height={600} width={1200}>
       <MaterialReactTable
-        renderTopToolbarCustomActions={() => <div>{stockInFormData.supplier.supplierName}</div>}
+        renderTopToolbarCustomActions={() => (
+          <div className="purchase-info-box">
+            <span>
+              <div>Supplier</div>
+              <div>: {stockInFormData.supplier.supplierName}</div>
+            </span>
+            <span>
+              <div>Supplier Invoice</div>
+              <div>: {stockInFormData.supplierInvoiceNo}</div>
+            </span>
+            <span>
+              <div>Purchase Date</div>
+              <div>: {moment(stockInFormData.purchaseDate).format('DD-MMM-YYYY')}</div>
+            </span>
+            <span>
+              <div>Remarks</div>
+              <div>: {stockInFormData.remarks}</div>
+            </span>
+          </div>
+        )}
         enableStickyHeader
         muiTableContainerProps={{ sx: { maxHeight: '600px' } }}
         columns={columns.slice(1)}
@@ -21,6 +56,7 @@ export default function StockInFormReviewModal({ stockInFormData, columns, show,
         onEditingRowCancel={() => {}}
         enableFilters={false}
         enableHiding={false}
+        enableFullScreenToggle={false}
         enableDensityToggle={false}
         muiTableProps={{
           sx: {
@@ -29,7 +65,11 @@ export default function StockInFormReviewModal({ stockInFormData, columns, show,
           }
         }}
         renderBottomToolbarCustomActions={() => (
-          <LoadingButton sx={{ width: 120 }} onClick={() => {}} variant="contained">
+          <LoadingButton
+            loading={isProcessing}
+            sx={{ width: 120 }}
+            onClick={() => dispatch(addStockinThunk(stockInFormData))}
+            variant="contained">
             Submit
           </LoadingButton>
         )}
