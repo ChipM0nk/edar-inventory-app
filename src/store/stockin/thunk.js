@@ -21,7 +21,7 @@ export const addStockinThunk = (addObj) => {
     try {
       delay(2000);
       dispatch(stockinActions.stockinIsProcessing());
-      const stockin = await addItem('purchase', { ...addObj, staff: 1 }); //TODO use userId from token
+      const stockin = await addItem('purchase', addObj); //TODO use userId from token
       dispatch(stockinActions.stockinIsAdded(stockin));
     } catch (error) {
       dispatch(stockinActions.stockinHasErrored(error.message));

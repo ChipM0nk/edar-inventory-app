@@ -10,17 +10,9 @@ import { NotificationManager } from 'react-notifications';
 import { addStockinThunk } from 'store/stockin/thunk';
 
 export default function StockInFormReviewModal({ stockInFormData, columns, show, onClose }) {
-  console.log(stockInFormData);
-  const { stockin, isProcessing, isSaved, crudError } = useSelector((state) => state.stockin);
+  const isProcessing = useSelector((state) => state.stockin.isProcessing);
   const dispatch = useDispatch();
-  useEffect(() => {
-    if (isSaved) {
-      onClose();
-      NotificationManager.info('Stockin is saved', 'Stock In', 3000);
-    } else if (crudError) {
-      NotificationManager.error(crudError, 'Product', 3000);
-    }
-  }, [isSaved, crudError]);
+
   return (
     <CustomModal title="Review Details" show={show} onClose={onClose} height={600} width={1200}>
       <MaterialReactTable

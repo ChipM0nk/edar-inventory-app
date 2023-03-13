@@ -15,6 +15,7 @@ import AddStockinItemModal from './AddStockInItemModal';
 import { Delete } from '@mui/icons-material';
 import { CustomAutoComplete } from 'Components/Common/customAutoComplete';
 import StockInFormReviewModal from './StockinFormReviewModal';
+import { NotificationManager } from 'react-notifications';
 export default function StockInForm() {
   /** MUI Daagrid column start */
 
@@ -140,6 +141,7 @@ export default function StockInForm() {
 
   const { suppliers } = useSelector((state) => state.supplier);
   const { products } = useSelector((state) => state.product);
+  const { isSaved, crudError } = useSelector((state) => state.stockin);
 
   /** Const end */
 
@@ -166,6 +168,18 @@ export default function StockInForm() {
   };
   /**Form definition end */
 
+  /** On save start */
+  useEffect(() => {
+    if (!onLoad.current) {
+      if (isSaved) {
+        setShowReviewModal(false);
+        NotificationManager.info('Stockin is saved', 'Stock In', 3000);
+      } else if (crudError) {
+        NotificationManager.error(crudError, 'Product', 3000);
+      }
+    }
+  }, [isSaved, crudError]);
+  /** On save end */
   /** On Load start */
 
   const dispatch = useDispatch();
@@ -211,14 +225,12 @@ export default function StockInForm() {
   /** Others start */
 
   function onSupplierChange(supplier) {
-    console.log(supplier);
     const filteredProducts = supplier
       ? products.filter((product) => product.supplier.supplierId === supplier.supplierId)
       : [];
 
     setFilteredProducts(filteredProducts);
     setStockinItems([]); //reset
-    setValue('supplier.supplierName', supplier.supplierName);
   }
 
   function handleDeleteRow(randomId) {
@@ -230,6 +242,16 @@ export default function StockInForm() {
   function onAddClick() {
     setShow(true);
   }
+
+  useEffect(() => {
+    let totalPurchaseAmount = 0;
+
+    stockinItems.forEach((el) => {
+      totalPurchaseAmount += el.itemTotalAmount;
+    });
+
+    setValue('totalAmount', totalPurchaseAmount);
+  }, [stockinItems]);
   /** Others end */
 
   return (
@@ -241,7 +263,7 @@ export default function StockInForm() {
             sx={{ width: 250 }}
             control={control}
             onChange={onSupplierChange}
-            name="supplier.supplierId"
+            name="supplier"
             placeholder="Select Supplier"
             optionId="supplierId"
             optionLabel="supplierName"
@@ -275,6 +297,7 @@ export default function StockInForm() {
         <MaterialReactTable
           enableEditing
           enableStickyHeader
+          enableSorting={false}
           muiTableContainerProps={{ sx: { maxHeight: '400px' } }}
           columns={columns}
           data={stockinItems}
@@ -322,6 +345,7 @@ export default function StockInForm() {
           variant="contained"
           type="submit"
           loading={false}
+          sx={{ width: 120, margin: '15px 10px' }}
           disabled={!isDirty || (stockinItems.length === 0 ? true : false)}>
           REVIEW
         </LoadingButton>

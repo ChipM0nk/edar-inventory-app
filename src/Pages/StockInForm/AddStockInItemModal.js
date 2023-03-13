@@ -68,7 +68,7 @@ export default function AddStockinItemModal({ show, onClose, filteredProducts, o
             control={control}
             width={300}
             onChange={handleSelectProduct}
-            name="product.productId"
+            name="product"
             placeholder="Select Product"
             optionId="productId"
             optionCode="productCode"

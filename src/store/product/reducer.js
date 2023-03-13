@@ -37,6 +37,7 @@ export default function productReducer(state = initialState, action) {
       };
 
     case actionTypes.PRODUCT_IS_ADDED:
+      console.log(action.product);
       return {
         ...state,
         products: [action.product, ...state.products],

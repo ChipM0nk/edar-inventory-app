@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 // @ts-nocheck
 import { LoadingButton } from '@mui/lab';
 import { TextField } from '@mui/material';
@@ -24,11 +25,18 @@ const ProductSchema = yup.object().shape({
     .required('Product Description is required')
     .max(50, 'Maximum of 150 characters only'),
   category: yup.object().shape({
-    categoryId: yup.string().required('Please select a category'),
+    categoryId: yup
+      .number()
+      .typeError('Please select a category')
+      .required('Please select a category'),
     categoryName: yup.string().required('Please select a category')
   }),
   supplier: yup.object().shape({
-    supplierId: yup.number().required('Please select a supplier')
+    supplierId: yup
+      .number()
+      .typeError('Please select a supplier')
+      .required('Please select a supplier'),
+    supplierName: yup.string().required('Please select a supplier')
   }),
   productPrice: yup
     .number()
@@ -75,7 +83,8 @@ export default function ProductModal({
     handleSubmit,
     reset,
     formState: { errors, isDirty },
-    control
+    control,
+    setValue
   } = useForm({
     resolver: yupResolver(ProductSchema)
   });
@@ -139,10 +148,11 @@ export default function ProductModal({
             options={categories}
             control={control}
             width={300}
-            name="category.categoryId"
+            name="category"
             placeholder="Select Category"
             optionId="categoryId"
             optionLabel="categoryName"
+            // onChange={(value) => setValue('category', value)}
           />
 
           <TextField
@@ -160,10 +170,11 @@ export default function ProductModal({
             options={suppliers}
             control={control}
             width={300}
-            name="supplier.supplierId"
+            name="supplier"
             placeholder="Select Supplier"
             optionId="supplierId"
             optionLabel="supplierName"
+            // onChange={(label) => setValue('supplier.supplierName', label)}
           />
 
           <TextField

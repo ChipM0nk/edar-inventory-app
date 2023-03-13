@@ -196,7 +196,7 @@ export default function Product() {
     dispatch(deleteProductThunk(catIdToDelete));
   };
 
-  /*** Delete function end..... */
+  /*** Delete fuznction end..... */
   /**For onload functions */
   const dispatch = useDispatch();
   const onLoad = useRef(true);

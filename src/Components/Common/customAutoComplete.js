@@ -22,7 +22,7 @@ export const CustomAutoComplete = (props) => {
               value={
                 value
                   ? options.find((option) => {
-                      return value === option[props.optionId];
+                      return value[props.optionId] === option[props.optionId];
                     }) ?? null
                   : null
               }
@@ -33,8 +33,8 @@ export const CustomAutoComplete = (props) => {
                   : option[props.optionLabel];
               }}
               onChange={(event, newValue) => {
-                onChange(newValue ? newValue[props.optionId] : null);
-                props.onChange(newValue);
+                onChange(newValue);
+                if (props.onChange) props.onChange(newValue);
               }}
               id="controllable-states-demo"
               options={options}
@@ -44,7 +44,7 @@ export const CustomAutoComplete = (props) => {
                   {...params}
                   error={error?.message ? true : false}
                   label={props.placeholder}
-                  inputRef={ref}
+                  ref={ref}
                   sx={{ width: props.width ?? 250 }}
                   helperText={error?.message ?? ''}
                 />

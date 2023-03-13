@@ -1,4 +1,6 @@
+// @ts-nocheck
 import axios from 'axios';
+import jwt_decode from 'jwt-decode';
 
 const API_URL = 'http://localhost:8080';
 
@@ -29,6 +31,8 @@ export const fetchAll = async (service) => {
 };
 
 export const addItem = async (service, addObj) => {
+  const token = localStorage.getItem('token');
+  const decoded = jwt_decode(token);
   try {
     const response = await axios({
       method: 'post',
@@ -37,7 +41,7 @@ export const addItem = async (service, addObj) => {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${localStorage.getItem('token')}`
       },
-      data: JSON.stringify(addObj)
+      data: JSON.stringify({ ...addObj, staff: decoded.username })
     });
 
     if (response.data.code === '000') {
